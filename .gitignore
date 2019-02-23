@@ -3,4 +3,5 @@ doc/
 *.out
 *.txt
 *.md
+*.pdf
 *.py
