@@ -44,14 +44,36 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int n;
+string s[50];
+
+void init()
+{
+}
+
 void solve()
 {
+    vector<char> v[50];
+    REP(i, n){
+        vector<char> vv;
+        for(char c: s[i]) vv.pb(c);
+        sort(ALL(vv));
+        if(i == 0){
+            v[i] = vv;
+        }else{
+            set_intersection(ALL(v[i-1]), ALL(vv), back_inserter(v[i]));
+        }
+    }
+    for(char c: v[n-1]) cout << c;
+    cout << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> n;
+    REP(i, n) cin >> s[i];
     solve();
     return 0;
 }

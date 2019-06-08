@@ -44,14 +44,37 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+int a[100000];
+
+void init()
+{
+}
+
 void solve()
 {
+    map<int, int> m;
+    int n = 0;
+    REP(i, N){
+        if(m.find(a[i]) == m.end()) m[a[i]] = 1;
+        else m[a[i]]++;
+    }
+    REP(i, 100000){
+        int num = 0;
+        if(m.find(i-1) != m.end()) num += m[i-1];
+        if(m.find(i) != m.end()) num += m[i];
+        if(m.find(i+1) != m.end()) num += m[i+1];
+        n = max(n, num);
+    }
+    cout << n << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N) cin >> a[i];
     solve();
     return 0;
 }

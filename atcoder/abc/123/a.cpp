@@ -44,14 +44,33 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int a[5], k;
+
+void init()
+{
+}
+
 void solve()
 {
+    REP(i, 5){
+        FOR(j, i, 5){
+            if(abs(a[i] - a[j]) > k){
+                cout << ":(" << endl;
+                goto END;
+            }
+        }
+    }
+    cout << "Yay!" << endl;
+END:
+    return;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    REP(i, 5) cin >> a[i];
+    cin >> k;
     solve();
     return 0;
 }

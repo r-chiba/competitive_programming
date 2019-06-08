@@ -1,5 +1,6 @@
 .DS_Store
 doc/
+interview/
 *.out
 *.txt
 *.md

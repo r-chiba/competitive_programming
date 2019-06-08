@@ -44,14 +44,47 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+vector<ll> a;
+
+void factor(ll n, map<ll, ll> &m)
+{
+    m[n]++;
+    for(ll i = 2; i*i <= n; i++){
+        if(n % i == 0){
+            m[i]++;
+            if(i != n/i) m[n/i]++;
+        }
+    }
+}
+
+void init()
+{
+}
+
 void solve()
 {
+    map<ll, ll> m;
+    REP(i, N){
+        factor(a[i], m);
+    }
+    for(auto it = m.rbegin(); it != m.rend(); it++){
+        if(it->se >= N-1){
+            cout << it->fi << endl;
+            break;
+        }
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    a.resize(N);
+    REP(i, N){
+        cin >> a[i];
+    }
     solve();
     return 0;
 }

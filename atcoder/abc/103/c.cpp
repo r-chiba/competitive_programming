@@ -45,24 +45,48 @@ constexpr double EPS = 1e-9;
 // }}}
 
 int N;
-int a[3000];
+vector<ll> a;
 
 void init()
 {
 }
 
+ll gcd(ll a, ll b)
+{
+    if(a < b) swap(a, b);
+    if(b == 0) return a;
+    return gcd(b, a % b);
+}
+
+inline ll lcm(ll a, ll b)
+{
+    // a*b may be overflowed
+    return a / gcd(a, b) * b;
+}
+
+ll lcm(vector<ll> v)
+{
+    size_t s = v.size();
+    ll ret = 1ll;
+    REP(i, s){
+        if(ret % v[i] != 0) ret = lcm(ret, v[i]);
+    }
+    return ret;
+}
+
+ll f(ll m)
+{
+    ll ret = 0;
+    for(ll v: a){
+        ret += m % v;
+    }
+    return ret;
+}
+
 void solve()
 {
-    ll ans = 0;
-    sort(a, a+N);
-    REP(i, a[N-1]+1){
-        ll v = 0;
-        REP(j, N){
-            v += i % a[j];
-        }
-        ans = max(ans, v);
-    }
-    cout << ans << endl;
+    ll m = lcm(a) - 1;
+    cout << f(m) << endl;
 }
 
 int main()
@@ -70,7 +94,11 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N;
-    REP(i, N) cin >> a[i];
+    REP(i, N){
+        ll v;
+        cin >> v;
+        a.pb(v);
+    }
     solve();
     return 0;
 }

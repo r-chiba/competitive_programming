@@ -44,14 +44,18 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll cx[200000], cy[200000];
+
 void solve()
 {
+    REP(i, 
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M >> K;
     solve();
     return 0;
 }

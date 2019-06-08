@@ -44,14 +44,27 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+string s;
+ll n[2];
+
+void init()
+{
+}
+
 void solve()
 {
+    REPR(i, s.size()-1){
+        int idx = s[i] - '0';
+        n[idx]++;
+    }
+    cout << 2*min(n[0], n[1]) << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> s;
     solve();
     return 0;
 }

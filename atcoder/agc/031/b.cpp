@@ -44,14 +44,42 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+vector<int> v;
+vector<int> same[200000];
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = 1;
+    REP(i, N){
+        same[v[i]].pb(i);
+    }
+    REP(i, N){
+        size_t s = same[i].size();
+        if(s >= 2){
+            ans += s*(s-1)/2;
+        }
+        FOR(j, 1, s){
+            if(same[i][j-1] == same[i][j]-1) ans -= j;
+        }
+        cout << s << " " << ans  << endl;
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    v.resize(N);
+    REP(i,N){
+        cin >> v[i]; v[i]--;
+    }
     solve();
     return 0;
 }

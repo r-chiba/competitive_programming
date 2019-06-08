@@ -44,14 +44,27 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll X;
+
 void solve()
 {
+    ll ans = 0;
+    ans += 2 * (X / (6 + 5));
+    X -= (6 + 5) * ans/2;
+    ll d = 1;
+    while(X > 0){
+        X -= (d == 1 ? 6 : 5);
+        ans++;
+        d *= -1;
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> X;
     solve();
     return 0;
 }

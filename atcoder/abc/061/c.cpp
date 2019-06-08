@@ -44,14 +44,32 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+P p[100000];
+ll K;
+
+void init()
+{
+}
+
 void solve()
 {
+    sort(p, p+N);
+    REP(i, N){
+        if(K <= p[i].se){
+            cout << p[i].fi << endl;
+            break;
+        }
+        K -= p[i].se;
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> K;
+    REP(i, N) cin >> p[i].fi >> p[i].se;
     solve();
     return 0;
 }

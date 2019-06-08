@@ -44,14 +44,29 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll N, T;
+ll t[200000];
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = 0;
+    FOR(i, 1, N){
+        ans += min(T, t[i]-t[i-1]);
+    }
+    ans += T;
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> T;
+    REP(i, N) cin >> t[i];
     solve();
     return 0;
 }

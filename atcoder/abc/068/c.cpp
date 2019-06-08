@@ -44,14 +44,39 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, M;
+P p[200000];
+bool b[200000];
+
+void init()
+{
+}
+
 void solve()
 {
+    bool ok = false;
+    REP(i, M){
+        if(p[i].fi != 0 && p[i].se == N-1) b[p[i].fi] = true;
+    }
+    REP(i, M){
+        if(p[i].fi == 0 && b[p[i].se]){
+            ok = true;
+            break;
+        }
+    }
+    cout << (ok ? "POSSIBLE" : "IMPOSSIBLE") << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
+    REP(i, M){
+        cin >> p[i].fi >> p[i].se;
+        p[i].fi--;
+        p[i].se--;
+    }
     solve();
     return 0;
 }

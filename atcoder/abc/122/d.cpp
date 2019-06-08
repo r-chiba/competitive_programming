@@ -44,14 +44,37 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+
 void solve()
 {
+    ll ans = 1;
+    REP(i, N){
+        ans *= 4;
+        ans %= MOD;
+    }
+    ll ng = 1;
+    REP(i, N-3){
+        ng *= 4;
+        ng %= MOD;
+    }
+    ng *= 3;
+    ng %= MOD;
+    ll nga = 1;
+    REP(i, N-2){
+        //nga *= ng;
+        //nga %= MOD;
+        ng *= 2;
+    }
+    cout << ans << " " << ng << " " << nga << endl;
+    cout << ans - nga << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
     solve();
     return 0;
 }

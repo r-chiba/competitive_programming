@@ -44,14 +44,42 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+int v[20], c[20];
+
+void init()
+{
+}
+
 void solve()
 {
+    int n = 0;
+    int ans = 0;
+    while(n < (1 << N)){
+        int nn = n;
+        int vall = 0, call = 0;
+        int i = 0;
+        while(nn > 0){
+            if(nn & 1){
+                vall += v[i];
+                call += c[i];
+            }
+            nn >>= 1;
+            i++;
+        }
+        ans = max(ans, vall - call);
+        n++;
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N) cin >> v[i];
+    REP(i, N) cin >> c[i];
     solve();
     return 0;
 }

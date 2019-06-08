@@ -44,14 +44,31 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, M;
+P ranges[100000];
+
 void solve()
 {
+    int ans = 0;
+    sort(ranges, ranges+M);
+    int m = ranges[0].se;
+    REP(i, M){
+        m = max(m, ranges[i].se);
+    }
+    cout << max(0, ranges[0].fi - m + 1) << endl;
+
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
+    REP(i, M){
+        cin >> ranges[i].se >> ranges[i].fi;
+        ranges[i].fi--;
+        ranges[i].se--;
+    }
     solve();
     return 0;
 }

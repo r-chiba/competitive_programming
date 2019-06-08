@@ -44,14 +44,28 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, K;
+
 void solve()
 {
+    double ans = 0.;
+    REP(i, N){
+        int n = 0;
+        int s = i+1;
+        while(s < K){
+            n++;
+            s *= 2;
+        }
+        ans += pow(0.5, n) / N;
+    }
+    cout << fixed << setprecision(10) << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> K;
     solve();
     return 0;
 }

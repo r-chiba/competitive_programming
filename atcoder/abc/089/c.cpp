@@ -44,14 +44,42 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+string s[100000];
+const char march[] = "MARCH";
+ll n[5];
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = 0;
+    REP(i, N){
+        REP(j, 5){
+            if(s[i][0] == march[j]){
+                n[j]++;
+                break;
+            }
+        }
+    }
+    REP(i, 5){
+        FOR(j, i+1, 5){
+            FOR(k, j+1, 5){
+                ans += n[i] * n[j] * n[k];
+            }
+        }
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N) cin >> s[i];
     solve();
     return 0;
 }

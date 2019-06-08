@@ -44,14 +44,52 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int H, W;
+int N;
+vector<int> a;
+int m[100][100];
+
+void init()
+{
+}
+
 void solve()
 {
+    int c = 0;
+    int j = 0;
+    int d;
+    REP(i, H){
+        if(i % 2 == 0) d = 1;
+        else d = -1;
+        REP(k, W){
+RETRY:
+            if(a[c] > 0){
+                m[i][j] = c+1;
+                a[c]--;
+            }else{
+                c++;
+                if(c < N) goto RETRY;
+            }
+            if(k != W-1) j += d;
+        }
+    }
+    
+    REP(i, H){
+        REP(j, W){
+            cout << m[i][j];
+            if(j != W-1) cout << " ";
+            else cout << endl;
+        }
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> H >> W >> N;
+    a.resize(N);
+    REP(i, N) cin >> a[i];
     solve();
     return 0;
 }

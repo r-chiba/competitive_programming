@@ -44,14 +44,27 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll N, K;
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = 0;
+    FOR(b, K+1, N+1){
+        ans += (b-K) * (N/b);
+        ans += max(0ll, (N % b) - (K-1));
+    }
+    cout << (K > 0 ? ans : N*N) << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> K;
     solve();
     return 0;
 }

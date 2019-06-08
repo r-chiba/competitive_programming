@@ -44,14 +44,32 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+int c[501], s[501], f[500];
+
+void init()
+{
+}
+
 void solve()
 {
+    REP(i, N){
+        int ans = 0;
+        FOR(j, i, N-1){
+            if(ans < s[j]) ans = s[j];
+            else if(ans % f[j] != 0) ans += (f[j] - (ans % f[j]));
+            ans += c[j];
+        }
+        cout << ans << endl;
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N-1) cin >> c[i] >> s[i] >> f[i];
     solve();
     return 0;
 }

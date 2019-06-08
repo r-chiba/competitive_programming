@@ -44,14 +44,32 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int a[5];
+
+void init()
+{
+}
+
 void solve()
 {
+    int ans = INF;
+    sort(a, a+5);
+    do{
+        int t = 0;
+        REP(i, 5){
+            if(t % 10 != 0) t += 10 - (t % 10);
+            t += a[i];
+        }
+        ans = min(ans, t);
+    }while(next_permutation(a, a+5));
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    REP(i, 5) cin >> a[i];
     solve();
     return 0;
 }

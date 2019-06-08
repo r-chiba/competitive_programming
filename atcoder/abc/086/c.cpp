@@ -44,14 +44,34 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+int t[100001], x[100001], y[100001];
+
+void init()
+{
+}
+
 void solve()
 {
+    bool ok = true;
+    FOR(i, 1, N+1){
+        int dt = t[i] - t[i-1];
+        int dx = abs(x[i] - x[i-1]);
+        int dy = abs(y[i] - y[i-1]);
+        if(dt < dx+dy || ((dx+dy)-dt) % 2 != 0){
+            ok = false;
+            break;
+        }
+    }
+    cout << (ok ? "Yes" : "No") << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    FOR(i, 1, N+1) cin >> t[i] >> x[i] >> y[i];
     solve();
     return 0;
 }

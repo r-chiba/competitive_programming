@@ -44,14 +44,60 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+string s;
+vector<int> same[26];
+vector<int> v;
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = 0ll;
+    int sz = s.size();
+    REP(i, sz) same[s[i]-'a'].pb(i);
+    REP(i, 26){
+        if(same[i].size() > 0) v.pb(same[i].size());
+    }
+    for(int x: v) cout << x << " ";
+    cout << endl;
+    ans += v.size();
+    REP(i, v.size()){
+        vector<ll> a;
+        a.pb(v[i]);
+        FOR(j, i+1, v.size()){
+            vector<ll> b;
+            for(ll x: a){
+                ans += x * v[j];
+                ans %= MOD;
+                b.pb(x * v[i]);
+            }
+            copy(b.begin(), b.end(), back_inserter(a));
+        }
+    }
+#if 0
+    int right = -1;     
+    for(int left = 0; left < sz; ++left){
+        bool flag[26];
+        REP(i, 26) flag[i] = false;
+        while(right < sz-1 && !flag[s[right+1]-'a']){
+            right++;
+            flag[s[right]-'a'] = true;
+            ans += right - left + 1;
+            cout << left << " " << right << " " << ans << endl;
+        }
+    }
+#endif
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> s;
     solve();
     return 0;
 }

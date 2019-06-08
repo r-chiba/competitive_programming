@@ -44,14 +44,34 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+int a[100001];
+
+void init()
+{
+}
+
 void solve()
 {
+    int sum = 0;
+    REP(i, N+1){
+        sum += abs(a[i%(N+1)] - a[(i+1)%(N+1)]);
+    }
+    FOR(i, 1, N+1){
+        int ans = sum;
+        ans -= abs(a[(i-1)%(N+1)] - a[i%(N+1)]);
+        ans -= abs(a[i%(N+1)] - a[(i+1)%(N+1)]);
+        ans += abs(a[(i-1)%(N+1)] - a[(i+1)%(N+1)]);
+        cout << ans << endl;
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    FOR(i, 1, N+1) cin >> a[i];
     solve();
     return 0;
 }

@@ -44,14 +44,39 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+ll v[100000];
+
+void init()
+{
+}
+
 void solve()
 {
+    map<ll, ll> m;
+    REP(i, N){
+        if(m.find(v[i]) != m.end()) m[v[i]]++;
+        else m[v[i]] = 1;
+    }
+    ll ans = 0;
+    for(auto it = m.begin(); it != m.end(); it++){
+        if(it->fi != it->se){
+            if(it->fi < it->se){
+                ans += it->se - it->fi;
+            }else{
+                ans += min(it->fi - it->se, it->se);
+            }
+        }
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N) cin >> v[i];
     solve();
     return 0;
 }

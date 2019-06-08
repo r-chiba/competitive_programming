@@ -44,14 +44,59 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, K;
+string s;
+
+void init()
+{
+}
+
 void solve()
 {
+    int ans = 0;
+    queue<int> pl, pr;
+    pl.push(0);
+    int r = 0;
+    int d = 0;
+    int x = 0;
+    while(r < N){
+        bool rev = false;
+        while(r < N && (s[r] == 1 || (s[r] == 0 && (rev || d+1 <= K)))){
+            //cout << "\t" << r << endl;
+            x++;
+            if(s[r] == 0){
+                if(!rev){
+                    rev = true;
+                    d++;
+                }
+            }else{
+                if(rev){
+                    pl.push(r);
+                    if(r > 1) pr.push(r-1);
+                    rev = false;
+                }
+            }
+            r++;
+        }
+        //cout << x << endl;
+        ans = max(ans, x);
+        if(r < N && d == K){
+            int ppl = pl.front(); pl.pop();
+            int ppr = pr.front(); pr.pop();
+            //cout << "\t" << ppl << " " << ppr << endl;
+            x -= ppr - ppl + 1;
+            d--;
+        }
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> K >> s;
+    REP(i, s.size()) s[i] -= '0';
     solve();
     return 0;
 }

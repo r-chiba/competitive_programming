@@ -44,14 +44,65 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, a[3], l[8];
+
+int score(vector<int> &v)
+{
+    int len = v.size();
+    int ret = INF;
+    REP(i, len) cout << v[i] << " ";
+    cout << endl;
+    REP(i, 3){
+        int used[8] = {0};
+        int r = 0;
+        REP(j, 3){
+            int m = INF, mi = -1;
+            REP(k, len){
+                if(used[k] == 0 && m > abs(v[k] - a[(i+j)%3])){
+                    m = abs(v[k] - a[(i+j)%3]);
+                    mi = k;
+                    cout << "\t\t" << m << endl;
+                }
+            }
+            used[mi] = 1;
+            r += m;
+        }
+        cout << "\t" << r << endl;
+        ret = min(ret, r);
+    }
+    cout << ret << endl;
+    return ret;
+}
+
 void solve()
 {
+    int ans = INF;
+    int i = 0;
+    while(i < (1<<N)){
+        vector<int> v;
+        int j = i;
+        int n = 0;
+        int p = 0;
+        REP(k, 8){
+            if((j>>k) & 1) v.pb(l[k]);
+            else{
+                n += l[k];
+                p += 10;
+            }
+        }
+        if(n > 0) v.pb(n);
+        ans = min(ans, score(v) + p);
+        i++;
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> a[0] >> a[1] >> a[2];
+    REP(i, N) cin >> l[i];
     solve();
     return 0;
 }

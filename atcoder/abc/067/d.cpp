@@ -44,14 +44,53 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+vector<int> g[100000];
+int c[100000];
+vector<int> black, white;
+
+void init()
+{
+}
+
 void solve()
 {
+    c[0] = 1;
+    c[N-1] = -1;
+    black.pb(0);
+    white.pb(N-1);
+    int i = 0;
+    while(true){
+        vector<int> &v = (i % 2 == 0 ? black : white);
+        int next = -1;
+        for(int e: v){
+            for(int n: g[e]){
+                if(c[n] == 0 && (next != -1 || g[n].size() > g[next].size())){
+                    next = n;
+                }
+            }
+        }
+        if(next == -1) break;
+        c[next] = (i % 2 == 0 ? 1 : -1);
+        v.pb(next);
+        i++;
+    }
+    cout << (i % 2 == 0 ? "Snuke" : "Fennec") << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N-1){
+        int a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
     solve();
     return 0;
 }

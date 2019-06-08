@@ -44,14 +44,40 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, M;
+vector<P> v;
+
+void init()
+{
+}
+
 void solve()
 {
+    sort(ALL(v), greater<P>());
+    int last = N+1;
+    int ans = 0;
+    for(P &p: v){
+        cout << "[" << p.fi << ", " << p.se << "]" << endl;
+        if(last >= p.fi){
+            last = p.se;
+            ans++;
+            //cout << last << endl;
+        }
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
+    REP(i, M){
+        int p, q;
+        cin >> p >> q;
+        p--; q--;
+        v.pb(mp(q, p));
+    }
     solve();
     return 0;
 }

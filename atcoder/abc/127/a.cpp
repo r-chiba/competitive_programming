@@ -53,6 +53,12 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     solve();
+    int a, b;
+    cin >> a >> b;
+    int ret = b;
+    if(6 <= a && a <= 12) ret /= 2;
+    if(a <= 5) ret = 0;
+    cout << ret << endl;
     return 0;
 }
 

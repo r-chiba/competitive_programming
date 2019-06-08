@@ -44,14 +44,23 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, M;
+
+void init()
+{
+}
+
 void solve()
 {
+    int t = 1900 * M + 100 * (N - M);
+    cout << t * (1<<M) << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
     solve();
     return 0;
 }

@@ -44,14 +44,50 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, C;
+int d[30][30];
+int c[500][500];
+ll cost[3][30];
+
+void init()
+{
+}
+
 void solve()
 {
+    REP(i, N){
+        REP(j, N){
+            REP(k, C){
+                int idx = (i+j+2)%3;
+                cost[idx][k] += d[c[i][j]][k];
+            }
+        }
+    }
+    ll ans = LINF;
+    REP(i, C){
+        REP(j, C){
+            if(j == i) continue;
+            REP(k, C){
+                if(k == i || k == j) continue;
+                ans = min(ans, cost[0][i]+cost[1][j]+cost[2][k]);
+            }
+        }
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> C;
+    REP(i, C) REP(j, C) cin >> d[i][j];
+    REP(i, N){
+        REP(j, N){
+            cin >> c[i][j];
+            c[i][j]--;
+        }
+    }
     solve();
     return 0;
 }

@@ -44,14 +44,43 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+int f[100][10];
+int p[100][11];
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = -LINF;
+    FOR(i, 1, 1<<10){
+        ll op[100];
+        REP(j, N) op[j] = 0;
+        REP(j, 10){
+            if((i>>j) & 1){
+                REP(k, N) if(f[k][j] == 1) op[k]++;
+            }
+        }
+        ll profit = 0;
+        REP(i, N){
+            profit += p[i][op[i]];
+        }
+        ans = max(ans, profit);
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N){
+        REP(j, 5) REP(k, 2) cin >> f[i][j*2+k];
+    }
+    REP(i, N) REP(j, 11) cin >> p[i][j];
     solve();
     return 0;
 }

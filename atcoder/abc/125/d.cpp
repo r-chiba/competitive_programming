@@ -44,14 +44,47 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+vector<ll> a;
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans1 = 0, ans2 = 0;
+    vector<ll> a1(a), a2(a);
+    FOR(i, 1, N){
+        if(a1[i]+a1[i-1] < -a1[i]-a1[i-1]){
+            a1[i] *= -1;
+            a1[i-1] *= -1;
+        }
+        ans1 += a1[i];
+    }
+    ans1 += a1[0];
+
+    FORR(i, N-2, 0){
+        if(a2[i]+a2[i+1] < -a2[i]-a2[i+1]){
+            a2[i] *= -1;
+            a2[i+1] *= -1;
+        }
+        ans2 += a2[i];
+    }
+    ans2 += a2[N-1];
+    cout << max(ans1, ans2) << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    REP(i, N){
+        ll x;
+        cin >> x;
+        a.pb(x);
+    }
     solve();
     return 0;
 }

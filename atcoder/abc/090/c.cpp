@@ -44,14 +44,28 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll N, M;
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans;
+    if(N > 2 && M > 2) ans = (N-2) * (M-2);
+    else if(N == 2 || M == 2) ans = 0;
+    else if(N == 1 && M > 1) ans = M-2;
+    else if(N > 1 && M == 1) ans = N-2;
+    else ans = 1;
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
     solve();
     return 0;
 }

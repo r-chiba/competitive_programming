@@ -44,14 +44,41 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int a, b, c;
+int m;
+
+int memo[100][100][100];
+
+int rec(int x, int y, int z)
+{
+    if(memo[x][y][z] != -1) return memo[x][y][z];
+    if(x == y && x == z) return 0;
+    if(max(x, max(y, z)) > m+2) return INF;
+    int ret = rec(x, y+1, z+1) + 1;
+    ret = min(ret, rec(x+1, y, z+1) + 1);
+    ret = min(ret, rec(x+1, y+1, z) + 1);
+    ret = min(ret, rec(x+2, y, z) + 1);
+    ret = min(ret, rec(x, y+2, z) + 1);
+    ret = min(ret, rec(x, y, z+2) + 1);
+    return memo[x][y][z] = ret;
+}
+
+void init()
+{
+}
+
 void solve()
 {
+    m = max(a, max(b, c));
+    REP(i, 100) REP(j, 100) REP(k, 100) memo[i][j][k] = -1;
+    cout << rec(a, b, c) << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> a >> b >> c;
     solve();
     return 0;
 }

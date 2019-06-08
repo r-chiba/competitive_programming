@@ -44,14 +44,27 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int a, b, k;
+priority_queue<int> q;
+
+void init()
+{
+}
+
 void solve()
 {
+    FOR(i, 1, max(a, b)+1){
+        if(a % i == 0 && b % i == 0) q.push(i);
+    }
+    REP(i, k-1) q.pop();
+    cout << q.top() << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> a >> b >> k;
     solve();
     return 0;
 }

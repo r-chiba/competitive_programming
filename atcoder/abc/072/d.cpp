@@ -44,14 +44,32 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+vector<int> v;
+
+void init()
+{
+}
+
 void solve()
 {
+    int ans = 0;
+    REP(i, N){
+        if(i+1 == v[i]){
+            ans++;
+            if(i != N-1) swap(v[i], v[i+1]);
+        }
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
+    v.resize(N);
+    REP(i, N) cin >> v[i];
     solve();
     return 0;
 }

@@ -44,14 +44,33 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int sx, sy, tx, ty;
+
 void solve()
 {
+    string s;
+    int dx = tx - sx;
+    int dy = ty - sy;
+    REP(i, dx) s += 'R';
+    REP(i, dy) s += 'U';
+    REP(i, dx) s += 'L';
+    REP(i, dy) s += 'D';
+    s += 'D';
+    REP(i, dx+1) s += 'R';
+    REP(i, dy+1) s += 'U';
+    s += 'L';
+    s += 'U';
+    REP(i, dx+1) s += 'L';
+    REP(i, dy+1) s += 'D';
+    s += 'R';
+    cout << s << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> sx >> sy >> tx >> ty;
     solve();
     return 0;
 }

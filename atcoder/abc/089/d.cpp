@@ -44,14 +44,43 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int H, W, D, Q;
+P a[90000];
+P p[100000];
+int m[900000];
+
+void init()
+{
+}
+
 void solve()
 {
+    REPR(i, H*W){
+        if(i+D <= H*W){
+            m[i] = m[i+D] + abs(a[i+D].fi-a[i].fi) + abs(a[i+D].se-a[i].se);
+        }
+    }
+    REP(i, Q){
+        cout << m[p[i].fi] - m[p[i].se] << endl;
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> H >> W >> D;
+    FOR(i, 1, H+1){
+        FOR(j, 1, W+1){
+            int v;
+            cin >>v;
+            a[v] = mp(i, j);
+        }
+    }
+    cin >> Q;
+    REP(i, Q){
+        cin >> p[i].fi >> p[i].se;
+    }
     solve();
     return 0;
 }

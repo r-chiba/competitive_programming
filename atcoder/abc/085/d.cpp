@@ -44,14 +44,44 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll N, H;
+vector<ll> a, b;
+
+void init()
+{
+}
+
 void solve()
 {
+    ll ans = 0;
+    sort(ALL(a));
+    sort(ALL(b));
+    auto it = upper_bound(ALL(b), a[N-1]);
+    if(it != b.end()){
+        ll s = 0;
+        for(auto i = b.end()-1; i != it-1; i--){
+            s += *i;
+            ans++;
+            if(s >= H) break;
+        }
+        H -= s;
+    }
+    if(H > 0){
+        ans += H / a[N-1] + (H % a[N-1] == 0 ? 0 : 1);
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> H;
+    a.resize(N);
+    b.resize(N);
+    REP(i, N){
+        cin >> a[i] >> b[i];
+    }
     solve();
     return 0;
 }

@@ -44,14 +44,62 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+ll N;
+
+map<ll, ll> prime_factor(ll n)
+{
+    map<ll, ll> ret;
+    for(ll i = 2; i*i <= n; i++){
+        while(n % i == 0){
+            ret[i]++;
+            n /= i;
+        }
+    }
+    if(n != 1) ret[n]++;
+    return ret;
+}
+
+void init()
+{
+}
+
 void solve()
 {
+    ll a = 1, b = 1;
+    map<ll, ll> m = prime_factor(N);
+    int d = 1;
+    for(auto it = m.begin(); it != m.end(); it++){
+        cout << it->fi << ": " << it->se << endl;
+        ll n = it->se / 2;
+        REP(i, n){
+            a *= it->fi;
+            b *= it->fi;
+        }
+        if(2*n < it->se){
+            if(d == 1) a *= it->fi;
+            else b *= it->fi;
+            d *= -1;
+        }
+    }
+    cout << a << " " << b << endl;
+
+    ll da = 0, db = 0;
+    while(a != 0){
+        a /= 10;
+        da++;
+    }
+    while(b != 0){
+        b /= 10;
+        db++;
+    }
+    cout << max(da, db) << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N;
     solve();
     return 0;
 }

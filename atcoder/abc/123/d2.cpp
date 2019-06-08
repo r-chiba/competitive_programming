@@ -44,14 +44,40 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int X, Y, Z, K;
+ll a[1000], b[1000], c[1000];
+
 void solve()
 {
+    vector<ll> v;
+    REP(i, X){
+        REP(j, Y){
+            v.pb(a[i] + b[j]);
+        }
+    }
+    sort(ALL(v), greater<ll>());
+    sort(c, c+Z, greater<ll>());
+    //priority_queue<ll, vector<ll>, greater<ll> > q;
+    priority_queue<ll> q;
+    REP(i, min(K, X*Y)){
+        REP(j, min(K, Z)){
+            q.push(v[i] + c[j]);
+        }
+    }
+    REP(i, K){
+        cout << q.top() << endl;
+        q.pop();
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> X >> Y >> Z >> K;
+    REP(i, X) cin >> a[i];
+    REP(i, Y) cin >> b[i];
+    REP(i, Z) cin >> c[i];
     solve();
     return 0;
 }

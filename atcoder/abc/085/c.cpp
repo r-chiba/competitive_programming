@@ -44,14 +44,33 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, Y;
+
+void init()
+{
+}
+
 void solve()
 {
+    REP(i, N+1){
+        REP(j, N+1){
+            if(i + j > N) continue;
+            int k = N - i - j;
+            if(10*i + 5*j + k == Y){
+                cout << i << " " << j << " " << k << endl;
+                return;
+            }
+        }
+    }
+    cout << "-1 -1 -1" << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> Y;
+    Y /= 1000;
     solve();
     return 0;
 }

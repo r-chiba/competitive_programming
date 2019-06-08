@@ -44,14 +44,37 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, M;
+ll a[100000];
+LP p[100000];
+ll s[100000];
+
 void solve()
 {
+    sort(a, a+N);
+    sort(p, p+M, greater<P>());
+    s[0] = a[0];
+    FOR(i, 1, N) s[i] = s[i-1] + a[i];
+    ll ret = s[N-1];
+    ll cur = 0;
+    REP(i, M){
+        auto c = lower_bound(a+cur, a+N, p[i].fi);
+        ll num = min(p[i].se, (ll)(c - (a+cur)));
+        ret += max(p[i].fi * num - (s[cur+num-1] - (cur == 0 ? 0 : s[cur-1])), 0ll);
+        cur = cur + num;
+    }
+    cout << ret << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
+    REP(i, N) cin >> a[i];
+    REP(i, M){
+        cin >> p[i].se >> p[i].fi;
+    }
     solve();
     return 0;
 }

@@ -44,14 +44,42 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N, M;
+
+void init()
+{
+}
+
+ll factorial(int n)
+{
+    ll ans = 1;
+    FOR(i, 1, n+1){
+        ans *= i;
+        ans %= MOD;
+    }
+    return ans;
+}
+
 void solve()
 {
+    if(N > M) swap(N, M);
+    if(N+1 < M) cout << 0 << endl;
+    else{
+        ll ans = factorial(N) * factorial(M);
+        ans %= MOD;
+        if((N+M) % 2 == 0){
+            ans *= 2;
+            ans %= MOD;
+        }
+        cout << ans << endl;
+    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> M;
     solve();
     return 0;
 }

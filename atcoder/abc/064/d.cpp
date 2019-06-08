@@ -44,14 +44,36 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int N;
+string s;
+
+void init()
+{
+}
+
 void solve()
 {
+    reverse(ALL(s));
+    int n = 0;
+    string ss;
+    REP(i, s.size()){
+        if(s[i] == '('){
+            if(n <= 0) ss += ')';
+            else n -= 1;
+        }
+        else n += 1;
+    }
+    REP(i, n) s += '(';
+    s =  ss + s;
+    reverse(ALL(s));
+    cout << s << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> s;
     solve();
     return 0;
 }

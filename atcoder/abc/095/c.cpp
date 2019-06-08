@@ -44,18 +44,42 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int a, b, c, x, y;
+
 void init()
 {
 }
 
 void solve()
 {
+    int ans = 0;
+    if(a + b > 2*c){
+        int n = min(x, y);
+        ans += n * 2 * c;
+        x -= n;
+        y -= n;
+    }
+    if(x > 0 && a > 2*c){
+        ans += x * 2 * c;
+        x -= x;
+        y -= x;
+    }
+    if(y > 0 && b > 2*c){
+        ans += y * 2 * c;
+        x -= y;
+        y -= y;
+    }
+    if(x > 0) ans += x * a;
+    if(y > 0) ans += y * b;
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> a >> b >> c >> x >> y;
+    solve();
     return 0;
 }
 

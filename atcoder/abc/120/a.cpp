@@ -44,6 +44,12 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
+int a, b, c;
+
+void init()
+{
+}
+
 void solve()
 {
 }
@@ -52,7 +58,8 @@ int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    solve();
+    cin >> a >> b >> c;
+    cout << min(b/a, c) << endl;
     return 0;
 }
 
