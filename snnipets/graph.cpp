@@ -50,7 +50,7 @@ bool bipartite_coloring(int v, int c)
     color[v] = c;
     for(auto next: g[v]){
         if(color[next] == c) return false;
-        if(color[next] == 0 && !dfs(next, -c)) return false;
+        if(color[next] == 0 && !bipartite_coloring(next, -c)) return false;
     }
     return true;
 }

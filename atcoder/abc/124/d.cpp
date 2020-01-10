@@ -47,56 +47,74 @@ constexpr double EPS = 1e-9;
 int N, K;
 string s;
 
-void init()
+bool achievable(int n)
 {
+    int l = 0, r = 0, nrev = 0, t = 0;
+    queue<int> lq, rq;
+    bool rev = false;
+    while(true){
+        while(r < N){
+            while(r < N && !rev && s[r] == '1'){
+                nrev++;
+                r++;
+            }
+            while(r < N && rev && s[r] == '0'){
+                nrev++;
+                r++;
+            }
+            if(nrev >= n) return true;
+            if(rev && s[r] == '1'){
+                rq.push(r);
+                rev = false;
+            }
+            if(t >= K && s[r] == '0') break;
+            if(!rev && s[r] == '0' && t < K){
+                lq.push(r);
+                rev = true;
+                t++;
+            }
+        };
+        if(r >= N) return (nrev >= n);
+        while(t >= K){
+            if(s[l] == '1'){
+                nrev--;
+                l++;
+            }
+            else if(s[l] == '0' && l == lq.front()){
+                while(l < rq.front()){
+                    nrev--;
+                    l++;
+                }
+                t--;
+                lq.pop();
+                rq.pop();
+            }
+        }
+    }
+    return false;
 }
+
 
 void solve()
 {
-    int ans = 0;
-    queue<int> pl, pr;
-    pl.push(0);
-    int r = 0;
-    int d = 0;
-    int x = 0;
-    while(r < N){
-        bool rev = false;
-        while(r < N && (s[r] == 1 || (s[r] == 0 && (rev || d+1 <= K)))){
-            //cout << "\t" << r << endl;
-            x++;
-            if(s[r] == 0){
-                if(!rev){
-                    rev = true;
-                    d++;
-                }
-            }else{
-                if(rev){
-                    pl.push(r);
-                    if(r > 1) pr.push(r-1);
-                    rev = false;
-                }
-            }
-            r++;
-        }
-        //cout << x << endl;
-        ans = max(ans, x);
-        if(r < N && d == K){
-            int ppl = pl.front(); pl.pop();
-            int ppr = pr.front(); pr.pop();
-            //cout << "\t" << ppl << " " << ppr << endl;
-            x -= ppr - ppl + 1;
-            d--;
+    int l = 0, r = N+1;
+    while(r - l > 1){
+        int mid = (l + r) / 2;
+        if(achievable(mid)){
+            l = mid;
+        }else{
+            r = mid;
         }
     }
-    cout << ans << endl;
+    cout << l << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> N >> K >> s;
-    REP(i, s.size()) s[i] -= '0';
+    cin >> N >> K;
+    cin >> s;
     solve();
     return 0;
 }

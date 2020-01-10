@@ -55,23 +55,27 @@ void solve()
 {
     ll ans1 = 0, ans2 = 0;
     vector<ll> a1(a), a2(a);
-    FOR(i, 1, N){
-        if(a1[i]+a1[i-1] < -a1[i]-a1[i-1]){
+    REP(i, N-1){
+        if(a1[i] + a1[i+1] < -a1[i] - a1[i+1]
+           || (a1[i] + a1[i+1] == -a1[i] - a1[i+1] && a1[i] < 0)){
             a1[i] *= -1;
-            a1[i-1] *= -1;
+            a1[i+1] *= -1;
         }
         ans1 += a1[i];
     }
-    ans1 += a1[0];
+    ans1 += a1[N-1];
 
-    FORR(i, N-2, 0){
-        if(a2[i]+a2[i+1] < -a2[i]-a2[i+1]){
+    REPR(i, N-2){
+        if(a2[i] + a2[i+1] < -a2[i] - a2[i+1]
+           || (a2[i] + a2[i+1] == -a2[i] - a2[i+1] && a2[i] < 0)){
             a2[i] *= -1;
             a2[i+1] *= -1;
         }
-        ans2 += a2[i];
+        ans2 += a2[i+1];
     }
-    ans2 += a2[N-1];
+    ans2 += a2[0];
+
+    //cout << ans1 << " " << ans2 << endl;
     cout << max(ans1, ans2) << endl;
 }
 

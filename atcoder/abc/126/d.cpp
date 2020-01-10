@@ -45,59 +45,49 @@ constexpr double EPS = 1e-9;
 // }}}
 
 int N;
-vector<LP> v[100000];
+struct edge {
+    int to;
+    ll cost;
+    edge(int t, ll c): to(t), cost(c) {};
+};
+vector<edge> g[100010];
+ll d[100000];
 
-int parent[100000*2], rank_[100000*2];
-
-void init()
+void dijkstra(int s)
 {
-  for(int i = 0; i < 100000*2; i++){
-    parent[i] = -1;
-    rank_[i] = 1;
-  }
-}
-
-int find(int c)
-{
-  if(parent[c] == -1) return c;
-  else{
-    return parent[c] = find(parent[c]);
-  }
-}
-
-void unite(int c1, int c2)
-{
-  c1 = find(c1);
-  c2 = find(c2);
-  if(c1 != c2){
-    if(rank_[c1] > rank_[c2]) parent[c2] = c1;
-    else{
-      parent[c1] = c2;
-      if(rank_[c1] == rank_[c2]) rank_[c2]++;
-    }
-  }
-}
-
-bool same(int c1, int c2)
-{
-  return find(c1) == find(c2);
-}
-
-void rec(int cur)
-{
-    for(auto &p: v[cur]){
-        if(p.se % 2 == 0) unite(cur, p.fi);
-        rec(p.fi);
+    priority_queue<LP, vector<LP>, greater<LP> > q;
+    REP(i, N) d[i] = LINF;
+    d[s] = 0;
+    q.push(make_pair(0ll, s));
+    while(!q.empty()){
+        LP p = q.top(); q.pop();
+        //cout << p.fi << " " << p.se << endl;
+        ll v = p.se;
+        if(p.first > d[v]) continue;
+        for(edge &e: g[v]){
+            //cout << v << " " << e.to << " " << e.cost << endl;
+            if(d[e.to] > d[v] + e.cost){
+                d[e.to] = d[v] + e.cost;
+                q.push(mp(d[e.to], e.to));
+            }
+        }
     }
 }
 
 void solve()
 {
-    init();
-
-    REP(i, N) rec(i);
-    //REP(i, N) cout << (int)same(0, i) << " " << find(i) << endl;
-    REP(i, N) cout << (int)same(0, i) << endl;
+    //REP(i, N){
+    //    for(edge &e: g[i]){
+    //        cout << i << " " << e.to << " " << e.cost << endl;
+    //    }
+    //}
+    //cout << endl;
+    dijkstra(0);
+    REP(i, N){
+        if(d[i] % 2 == 0) cout << 0 << endl;
+        else cout << 1 << endl;
+        //cout << "\t" << d[i] << endl;
+    }
 }
 
 int main()
@@ -105,11 +95,13 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N;
-    REP(i, N){
-        ll p, q, r;
-        cin >> p >> q >> r;
-        p--; q--;
-        v[p].pb(mp(q, r));
+    REP(i, N-1){
+        int u, v;
+        ll w;
+        cin >> u >> v >> w;
+        u--; v--;
+        g[u].pb(edge(v, w));
+        g[v].pb(edge(u, w));
     }
     solve();
     return 0;

@@ -1,6 +1,8 @@
 .DS_Store
+coursera/
 doc/
 interview/
+memo/
 *.out
 *.txt
 *.md

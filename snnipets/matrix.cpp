@@ -47,6 +47,18 @@ constexpr double EPS = 1e-9;
 typedef vector<ll> vec;
 typedef vector<vec> mat;
 
+vec matvecmul(mat &A, vec &b)
+{
+    ll m = A.size(), n = b.size();
+    vec v(m);
+    REP(i, m){
+        REP(j, n){
+            v[i] += A[i][j] * b[j];
+        }
+    }
+    return v;
+}
+
 mat matmul(mat &A, mat &B)
 {
     mat C(A.size(), vec(B[0].size()));

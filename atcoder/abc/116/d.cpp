@@ -44,36 +44,37 @@ constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 // }}}
 
-int N;
-int K;
-int t[100001];
-ll d[100001];
-
-pair<ll, set<int> > dp[2][100001];
-
-void init()
-{
-}
+int N, K;
+LP s[100000];
 
 void solve()
 {
-    FOR(i, 1, N+1){
-        FOR(j, 1, min(i, (ll)K)+1){
-            set<int> &s = dp[(i-1)%2][j-1].se;
-            ll ss = s.size();
-            ll val = dp[(i-1)%2][j-1].fi + d[i]
-                        + (s.find(t[i]) == s.end() ? (ss+1)*(ss+1) - ss*ss : 0);
-            if(val > dp[(i-1)%2][j].fi){
-                dp[i%2][j].fi = val;
-                dp[i%2][j].se = dp[(i-1)%2][j-1].se;
-                dp[i%2][j].se.insert(t[i]);
-            }else{
-                dp[i%2][j].fi = dp[(i-1)%2][j].fi;
-                dp[i%2][j].se = dp[(i-1)%2][j].se;
-            }
+    ll ans = 0, ans1 = 0;
+    set<int> ss;
+    priority_queue<LP, vector<LP>, greater<LP> > q;
+
+    sort(s, s+N, greater<LP>());
+    REP(i, K){
+        if(ss.find(s[i].se) == ss.end()){
+            ss.insert(s[i].se);
+        }else{
+            q.push(s[i]);
+        }
+        ans1 += s[i].fi;
+    }
+    ans1 += ss.size() * ss.size();
+    ans = ans1;
+    FOR(i, K, N){
+        if(q.size() == 0) break;
+        if(ss.find(s[i].se) == ss.end()){
+            int sz = ss.size();
+            ans1 += 2*sz + 1 - (q.top().fi - s[i].fi);
+            ans = max(ans, ans1);
+            q.pop();
+            ss.insert(s[i].se);
         }
     }
-    cout << dp[N%2][K].fi << endl;
+    cout << ans << endl;
 }
 
 int main()
@@ -81,7 +82,7 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N >> K;
-    FOR(i, 1, N+1) cin >> t[i] >> d[i];
+    REP(i, N) cin >> s[i].se >> s[i].fi;
     solve();
     return 0;
 }

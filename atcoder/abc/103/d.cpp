@@ -51,6 +51,7 @@ void init()
 {
 }
 
+#if 0
 void solve()
 {
     sort(ALL(v), greater<P>());
@@ -66,6 +67,22 @@ void solve()
     }
     cout << ans << endl;
 }
+#else
+void solve()
+{
+    sort(ALL(v));
+    int r = v[0].fi;
+    int ans = 1;
+    REP(i, v.size()){
+        P &p = v[i];
+        if(p.se >= r){
+            r = p.fi;
+            ans++;
+        }
+    }
+    cout << ans << endl;
+}
+#endif
 
 int main()
 {
