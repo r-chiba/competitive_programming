@@ -67,12 +67,12 @@ void combination()
     }
 }
 #else // use this if above condition is not met
-const int COMB_MAX = 510000;
+constexpr int COMB_MAX = 510000;
 ll fac[COMB_MAX];   // fac[i]  = i!        (mod MOD)
 ll finv[COMB_MAX];  // finv[i] = (i!)^{-1} (mod MOD)
 ll inv[COMB_MAX];   // inv[i]  = i^{-1}    (mod MOD)
 
-void comb_init()
+void combInit()
 {
     fac[0] = fac[1] = 1;
     finv[0] = finv[1] = 1;

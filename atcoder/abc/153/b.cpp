@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -28,6 +30,16 @@ using namespace std;
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
 
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
+
 typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<int, int> P;
@@ -42,21 +54,34 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
-int H, W, K;
-ll dp[102][8];
+ll H, N;
+ll a[100010];
 
 void solve()
 {
+    ll s = 0;
+    REP (i, N) s += a[i];
+    cout << (s >= H ? "Yes" : "No") << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> H >> W >> K;
-    K--;
+    cin >> H >> N;
+    REP (i, N) cin >> a[i];
     solve();
     return 0;
 }

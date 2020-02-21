@@ -62,6 +62,9 @@ void solve()
     int ans = 0;
     REP (i, N) {
         FOR (j, i+1, N) {
+            int ub = upper_bound(l, l+N, l[i]+l[j]) - l;
+            int lb = lower_bound(l, l+N, l[j]-l[i]) - l;
+            ans += max(N - ub, 0) + max(lb - 1, 0);
         }
     }
     cout << ans << endl;

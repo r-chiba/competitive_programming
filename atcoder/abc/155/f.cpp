@@ -47,6 +47,18 @@ constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 
+// template specialization of std::hash for std::pair
+namespace std {
+template<typename T, typename U>
+struct hash<pair<T, U> > {
+    size_t operator()(const pair<T, U> &key) const noexcept {
+        size_t h1 = hash<T>()(key.first);
+        size_t h2 = hash<U>()(key.second);
+        return h1 ^ (h2 << 1);
+    }
+};
+} // namespace std
+
 template<typename T>
 ostream &operator<<(ostream &os, const vector<T> &v) {
     size_t sz = v.size();
@@ -64,7 +76,7 @@ void printArray(T *arr, size_t sz) {
     for (size_t i = 0; i < sz-1; i++) {
         cerr << arr[i] << ",";
     }
-    cerr << arr[sz-1] <<  "]";
+    cerr << arr[sz-1] <<  "]" << endl;
 }
 
 static inline ll mod(ll x, ll m)
@@ -73,12 +85,14 @@ static inline ll mod(ll x, ll m)
     return (y >= 0 ? y : y+m);
 }
 
-template<typename T>
-struct PairHash {
-    size_t operator()(const pair<T, T> &p) const {
-        const auto h1 = hash<T>()(p.fi);
-        const auto h2 = hash<T>()(p.se);
-        return h1 ^ (h2 << 1);
+struct Compare {
+    //vector<ll> &x_, &y_;
+    //Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
+    //bool operator()(const P &lhs, const P &rhs) {
+    //    return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
+    //}
+    bool operator()(const int x, const int y) {
+        return x < y;
     }
 };
 
@@ -87,52 +101,14 @@ struct PairHash {
 
 // }}}
 
-int X, Y, Z, K;
-vector<ll> a, b, c;
-
-struct Compare {
-    vector<ll> &x_, &y_;
-    Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
-    bool operator()(const P &lhs, const P &rhs) {
-        return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
-    }
-};
-
 void solve()
 {
-    vector<ll> ab;
-    REP (i, X) REP (j, Y) {
-        ab.pb(a[i]+b[j]);
-    }
-    sort(ALL(ab), greater<ll>());
-    sort(ALL(c), greater<ll>());
-    unordered_set<P, PairHash<int> > s;
-    priority_queue<P, vector<P>, Compare> q(Compare(ab, c));
-    q.push(mp(0, 0));
-    while (K > 0) {
-        auto p = q.top();
-        q.pop();
-        if (s.find(p) != s.end()) continue;
-        if (p.fi >= ab.size() || p.se >= c.size()) continue;
-        s.insert(p);
-        K--;
-        cout << ab[p.fi]+c[p.se] << endl;
-        q.push(mp(p.fi+1, p.se));
-        q.push(mp(p.fi, p.se+1));
-    }
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> X >> Y >> Z >> K;
-    a.resize(X);
-    b.resize(Y);
-    c.resize(Z);
-    REP (i, X) cin >> a[i];
-    REP (i, Y) cin >> b[i];
-    REP (i, Z) cin >> c[i];
     solve();
     return 0;
 }

@@ -32,12 +32,20 @@ using namespace std;
 
 #define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
 
-using ll = long long;
-using ull = unsigned long long;
-using P = pair<int, int>;
-using LP = pair<ll, ll>;
-using IP = pair<int, P>;
-using LLP = pair<ll, LP>;
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
+
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<int, int> P;
+typedef pair<ll, ll> LP;
+typedef pair<int, P> IP;
+typedef pair<ll, LP> LLP;
 
 const int dx[] = {1, -1, 0, 0};
 const int dy[] = {0, 0, 1, -1};
@@ -47,68 +55,65 @@ constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 
-template<typename T>
-ostream &operator<<(ostream &os, const vector<T> &v) {
-    size_t sz = v.size();
-    os << "[";
-    for (size_t i = 0; i < sz-1; i++) {
-        os << v[i] << ", ";
-    }
-    os << v[sz-1] <<  "]";
-    return os;
-}
-
-template<typename T>
-void printArray(T *arr, size_t sz) {
-    cerr << "[";
-    for (size_t i = 0; i < sz-1; i++) {
-        cerr << arr[i] << ",";
-    }
-    cerr << arr[sz-1] <<  "]";
-}
-
 static inline ll mod(ll x, ll m)
 {
     ll y = x % m;
     return (y >= 0 ? y : y+m);
 }
 
-
 // print floating-point number
 // cout << fixed << setprecision(12) <<
 
 // }}}
 
+ll f[100010], finv[100010], inv[100010];
+void comInit() {
+    f[0] = f[1] = 1;
+    finv[0] = finv[1] = 1;
+    inv[1] = 1;
+    for (int i = 2; i < 100010; i++){
+        f[i] = f[i - 1] * i % MOD;
+        inv[i] = MOD - inv[MOD%i] * (MOD / i) % MOD;
+        finv[i] = finv[i - 1] * inv[i] % MOD;
+    }
+}
+
+long long comb(int n, int k){
+    if (n < k) return 0;
+    if (n < 0 || k < 0) return 0;
+    return f[n] * (finv[k] * finv[n - k] % MOD) % MOD;
+}
+
 int N, K;
-ll v[51];
+ll a[100010];
+ll s[100010];
+ll d[100010];
 
 void solve()
 {
     ll ans = 0;
-    ull b = 0;
-    REP (i, N+1) {
-        if (i > K) continue;
-        REP (j, i+1) {
-            ull b = ((((1ull<<j)-1) << (N-j)) | (1ull<<(i-j))-1);
-            priority_queue<ll, vector<ll>, greater<ll> > q;
-            REP (i, N) {
-                if ((b>>i)&1) {
-                    q.push(v[i]);
-                }
-            }
-            ll a = 0, c = K-i;
-            while (!q.empty()) {
-                ll x = q.top();
-                if (x < 0 && c > 0) {
-                    c--;
-                } else {
-                    a += x;
-                }
-                q.pop();
-            }
-            ans = max(ans, a);
+    comInit();
+    sort(a, a+N);
+
+    s[0] = mod(a[0], MOD);
+    FOR (i, 1, N) s[i] = mod(s[i-1] + a[i], MOD);
+
+    FOR (i, K, N) {
+        d[i] = mod(s[N-1]-s[i-2]-s[N-i], MOD);
+        ans += (d[i] * comb(i-2, K-2)) % MOD;
+        ans %= MOD;
+    }
+
+#if 0
+    REP (i, N) {
+        FOR (j, i+K-1, N) {
+            //cout << i << " " << j << endl;
+            //cout << a[i] << " " << a[j] << " " << comb((int)(j-i+1-2), K-2) << endl;
+            ans += (mod(a[j]-a[i], MOD) * comb((int)(j-i+1-2), K-2)) % MOD;
+            ans %= MOD;
         }
     }
+#endif
     cout << ans << endl;
 }
 
@@ -117,7 +122,7 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N >> K;
-    REP (i, N) cin >> v[i];
+    REP (i, N) cin >> a[i];
     solve();
     return 0;
 }

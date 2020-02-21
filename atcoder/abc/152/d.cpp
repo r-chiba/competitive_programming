@@ -32,12 +32,20 @@ using namespace std;
 
 #define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
 
-using ll = long long;
-using ull = unsigned long long;
-using P = pair<int, int>;
-using LP = pair<ll, ll>;
-using IP = pair<int, P>;
-using LLP = pair<ll, LP>;
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
+
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<int, int> P;
+typedef pair<ll, ll> LP;
+typedef pair<int, P> IP;
+typedef pair<ll, LP> LLP;
 
 const int dx[] = {1, -1, 0, 0};
 const int dy[] = {0, 0, 1, -1};
@@ -47,67 +55,60 @@ constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
 
-template<typename T>
-ostream &operator<<(ostream &os, const vector<T> &v) {
-    size_t sz = v.size();
-    os << "[";
-    for (size_t i = 0; i < sz-1; i++) {
-        os << v[i] << ", ";
-    }
-    os << v[sz-1] <<  "]";
-    return os;
-}
-
-template<typename T>
-void printArray(T *arr, size_t sz) {
-    cerr << "[";
-    for (size_t i = 0; i < sz-1; i++) {
-        cerr << arr[i] << ",";
-    }
-    cerr << arr[sz-1] <<  "]";
-}
-
 static inline ll mod(ll x, ll m)
 {
     ll y = x % m;
     return (y >= 0 ? y : y+m);
 }
 
-
 // print floating-point number
 // cout << fixed << setprecision(12) <<
 
 // }}}
 
-int N, K;
-ll v[51];
+int N;
 
 void solve()
 {
-    ll ans = 0;
-    ull b = 0;
-    REP (i, N+1) {
-        if (i > K) continue;
-        REP (j, i+1) {
-            ull b = ((((1ull<<j)-1) << (N-j)) | (1ull<<(i-j))-1);
-            priority_queue<ll, vector<ll>, greater<ll> > q;
-            REP (i, N) {
-                if ((b>>i)&1) {
-                    q.push(v[i]);
-                }
-            }
-            ll a = 0, c = K-i;
-            while (!q.empty()) {
-                ll x = q.top();
-                if (x < 0 && c > 0) {
-                    c--;
-                } else {
-                    a += x;
-                }
-                q.pop();
-            }
-            ans = max(ans, a);
+    int ans = 0;
+    int fn, ln, dn = 1;
+    ln = N % 10;
+    int ni = N;
+    while (ni >= 10){
+        ni /= 10;
+        dn++;
+    }
+    fn = ni;
+    int nm = (dn > 2 ? stoi(to_string(N).substr(1, dn-2), nullptr, 10) : 1);
+    FOR (i, 1, N+1) {
+        int f, l, d = 1;
+        l = i % 10;
+        if (l == 0) continue;
+        int j = i;
+        while (j >= 10){
+            j /= 10;
+            d++;
         }
+        f = j;
+        cout << i << " " << f << " " << l << " " << d << endl;
+        int a = 0;
+        if (d == 1 && l == f) {
+            int x = l;
+            while (x <= N) {
+                a++;
+                x = x*10 + l;
+            }
+        } else if (dn >= 2) {
+            a += (l == f ? 1 : 0);
+            FOR (k, 0, dn-2) {
+                a += pow(10, k);
+            }
+            if (l < fn) a += pow(10, dn-2);
+            else if (l == fn) a += nm - (f <= ln ? 0 : 1);
+        }
+        cout << i << "!" << a << endl;
+        ans += a;
+        //}
     }
     cout << ans << endl;
 }
@@ -116,8 +117,7 @@ int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> N >> K;
-    REP (i, N) cin >> v[i];
+    cin >> N;
     solve();
     return 0;
 }

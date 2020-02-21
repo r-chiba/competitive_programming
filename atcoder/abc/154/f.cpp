@@ -101,40 +101,77 @@ struct Compare {
 
 // }}}
 
-int N;
-ll K;
-ll a[100010];
-ll dp[50][2];
+ll pow_mod(ll x, ll n, ll mod)
+{
+    ll ret = 1ll;
+    ll v = x;
+    for (; n > 0; n >>= 1) {
+        if (n & 1) (ret *= v) %= mod;
+        (v *= v) %= mod;
+    }
+    return ret;
+}
+
+ll mod_inverse(ll a, ll m)
+{
+    return pow_mod(a, m-2, m);
+}
+constexpr int COMB_MAX = 1000001;
+ll fac[COMB_MAX];   // fac[i]  = i!        (mod MOD)
+ll finv[COMB_MAX];  // finv[i] = (i!)^{-1} (mod MOD)
+ll inv[COMB_MAX];   // inv[i]  = i^{-1}    (mod MOD)
+
+ll s[1000010];
+
+void combInit()
+{
+    fac[0] = fac[1] = 1;
+    finv[0] = finv[1] = 1;
+    inv[1] = 1;
+    FOR(i, 2, COMB_MAX){
+        fac[i] = fac[i-1] * i % MOD;
+        // i^{-1} (mod p) = -(p mod i)^{-1} * (p/i) (mod p)
+        inv[i] = MOD - inv[MOD%i] * (MOD/i) % MOD;
+        finv[i] = finv[i-1] * inv[i] % MOD;
+    }
+}
+
+ll comb(int n, int k)
+{
+    if(n < k) return 0;
+    if(n < 0 || k < 0) return 0;
+    return fac[n] * (finv[k] * finv[n-k] % MOD) % MOD;
+}
+
+ll perm(int n, int k)
+{
+    if(n < k) return 0;
+    if(n < 0 || k < 0) return 0;
+    return fac[n] * finv[k] % MOD;
+}
+
+ll r1, r2, c1, c2;
 
 void solve()
 {
-    REP (i, 50) dp[i][0] = dp[i][1] = -1;
-    dp[45][0] = 0;
-    FORR (i, 44, 0) {
-        int n = 0;
-        REP (j, N) {
-            if (a[j] & (1ll << i)) n++;
-        }
-        if (dp[i+1][1] >= 0)
-            dp[i][1] = max(dp[i][1], dp[i+1][1] + max(n, N-n) * (1ll << i));
-        if (dp[i+1][0] >= 0) {
-            if (K & (1ll << i)) {
-                dp[i][0] = max(dp[i][0], dp[i+1][0] + (N-n) * (1ll << i));
-                dp[i][1] = max(dp[i][1], dp[i+1][0] + n * (1ll << i));
-            } else {
-                dp[i][0] = max(dp[i][0], dp[i+1][0] + n * (1ll << i));
-            }
-        }
+    combInit();
+    ll ans = 0;
+    FOR (c, c1, c2+1) {
+        ll first = comb(r1+c, r1);
+        ll ratio = (r1+c+1) * (r1+1) % MOD;
+        ll s = first * mod(pow_mod(ratio, r2-r1+1, MOD) - 1, MOD)
+                * mod_inverse(mod(ratio - 1, MOD), MOD);
+        s %= MOD;
+        ans = (ans + s) % MOD;
     }
-    cout << max(dp[0][0], dp[0][1]) << endl;
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> N >> K;
-    REP (i, N) cin >> a[i];
+    cin >> r1 >> c1 >> r2 >> c2;
     solve();
     return 0;
 }

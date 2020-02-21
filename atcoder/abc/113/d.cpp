@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -28,12 +30,14 @@ using namespace std;
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef pair<int, int> P;
-typedef pair<ll, ll> LP;
-typedef pair<int, P> IP;
-typedef pair<ll, LP> LLP;
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+using ll = long long;
+using ull = unsigned long long;
+using P = pair<int, int>;
+using LP = pair<ll, ll>;
+using IP = pair<int, P>;
+using LLP = pair<ll, LP>;
 
 const int dx[] = {1, -1, 0, 0};
 const int dy[] = {0, 0, 1, -1};
@@ -42,51 +46,99 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+// template specialization of std::hash for std::pair
+namespace std {
+template<typename T, typename U>
+struct hash<pair<T, U> > {
+    size_t operator()(const pair<T, U> &key) const noexcept {
+        size_t h1 = hash<T>()(key.first);
+        size_t h2 = hash<U>()(key.second);
+        return h1 ^ (h2 << 1);
+    }
+};
+} // namespace std
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    size_t sz = v.size();
+    os << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        os << v[i] << ", ";
+    }
+    os << v[sz-1] <<  "]";
+    return os;
+}
+
+template<typename T>
+void printArray(T *arr, size_t sz) {
+    cerr << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        cerr << arr[i] << ",";
+    }
+    cerr << arr[sz-1] <<  "]" << endl;
+}
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+struct Compare {
+    //vector<ll> &x_, &y_;
+    //Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
+    //bool operator()(const P &lhs, const P &rhs) {
+    //    return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
+    //}
+    bool operator()(const int x, const int y) {
+        return x < y;
+    }
+};
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
 int H, W, K;
+ll dp[110][10];
 
-ll dp[8][8][101][101];
-
-void init()
+bool isValid(int b)
 {
+    REP (i, W-2) {
+        if ((b & (1<<i)) && (b & (1<<(i+1))))
+            return false;
+    }
+    return true;
 }
 
 void solve()
 {
-    REP(i, K){
-        dp[i][i][0][0] = 1;
-        FOR(j, 1, H+1){
-            if(i-1 > 0) dp[i][i-1][j][j] = dp[i-1][i][j][j] = 1;
-            if(i+1 < W) dp[i][i+1][j][j] = dp[i+1][i][j][j] = 1;
-        }
-    }
-    REP(i, K){
-        REP(j, K){
-            FOR(k, 1, W+1){
-                REP(l, W+1){
-                    FOR(m, k, W+1){
-                        if(i-1 > 0){
-                            dp[i][j][k][l] += dp[i-1][j][m][l];
-                            dp[i][j][k][l] %= MOD;
-                        }
-                        if(i+1 < W){
-                            dp[i][j][k][l] += dp[i+1][j][m][l];
-                            dp[i][j][k][l] %= MOD;
-                        }
-                    }
+    dp[0][0] = 1;
+    REP (i, H) {
+        REP (b, 1<<(W-1)) {
+            if (!isValid(b)) continue;
+            REP (j, W) {
+                bool fall = true;
+                if (j > 0 && (b & (1<<(j-1)))) {
+                    dp[i+1][j] += dp[i][j-1];
+                    dp[i+1][j] %= MOD;
+                    fall = false;
+                }
+                if (j < W-1 && (b & (1<<j))) {
+                    dp[i+1][j] += dp[i][j+1];
+                    dp[i+1][j] %= MOD;
+                    fall = false;
+                }
+                if (fall) {
+                    dp[i+1][j] += dp[i][j];
+                    dp[i+1][j] %= MOD;
                 }
             }
         }
     }
-    ll ans = 0;
-    REP(i, W+1){
-        REP(j, W+1){
-            ans += dp[0][K-1][i][j];
-            ans %= MOD;
-        }
-    }
-    cout << ans << endl;
+    cout << dp[H][K-1] << endl;
 }
 
 int main()

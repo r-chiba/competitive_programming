@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -28,6 +30,16 @@ using namespace std;
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
 
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
+
 typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<int, int> P;
@@ -42,41 +54,29 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
 int N;
-vector<ll> a;
-
-void init()
-{
-}
+ll a[100010];
 
 void solve()
 {
-    ll ans1 = 0, ans2 = 0;
-    vector<ll> a1(a), a2(a);
-    REP(i, N-1){
-        if(a1[i] + a1[i+1] < -a1[i] - a1[i+1]
-           || (a1[i] + a1[i+1] == -a1[i] - a1[i+1] && a1[i] < 0)){
-            a1[i] *= -1;
-            a1[i+1] *= -1;
-        }
-        ans1 += a1[i];
+    ll ans = 0;
+    REP (i, N) {
+        if (a[i] < 0) a[i] = -a[i];
+        ans += a[i];
     }
-    ans1 += a1[N-1];
-
-    REPR(i, N-2){
-        if(a2[i] + a2[i+1] < -a2[i] - a2[i+1]
-           || (a2[i] + a2[i+1] == -a2[i] - a2[i+1] && a2[i] < 0)){
-            a2[i] *= -1;
-            a2[i+1] *= -1;
-        }
-        ans2 += a2[i+1];
-    }
-    ans2 += a2[0];
-
-    //cout << ans1 << " " << ans2 << endl;
-    cout << max(ans1, ans2) << endl;
+    cout << ans - min(a[0], a[N-1]) << endl;
 }
 
 int main()
@@ -84,11 +84,7 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N;
-    REP(i, N){
-        ll x;
-        cin >> x;
-        a.pb(x);
-    }
+    REP (i, N) cin >> a[i];
     solve();
     return 0;
 }

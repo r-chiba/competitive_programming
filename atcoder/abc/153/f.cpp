@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -27,6 +29,16 @@ using namespace std;
 #define REP(i, n) for(ll i = 0ll; i < static_cast<ll>(n); i++)
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
+
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -49,9 +61,11 @@ static inline ll mod(ll x, ll m)
     return (y >= 0 ? y : y+m);
 }
 
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
-// segment tree (range min)
 template<typename T>
 class SegmentTree {
     size_t sz_, rsz_;
@@ -59,29 +73,29 @@ class SegmentTree {
 
     T construct(size_t idx) {
         if (idx >= sz_-1) return v_[idx];
-        return v_[idx] = min(construct(2*idx+1), construct(2*idx+2));
+        return v_[idx] = max(construct(2*idx+1), construct(2*idx+2));
     }
 
     T query(size_t a, size_t b, size_t k, size_t l, size_t r) {
-        if (r <= a || b <= l) return numeric_limits<T>::max();
+        if (r <= a || b <= l) return numeric_limits<T>::min();
         if (a <= l && r <= b) return v_[k];
         size_t mid = (l+r) / 2;
         T lv = query(a, b, 2*k+1, l, mid);
         T rv = query(a, b, 2*k+2, mid, r);
-        return min(lv, rv);
+        return max(lv, rv);
     }
 
 public:
     SegmentTree(size_t n): rsz_(n) {
         sz_ = 1;
         while (sz_ < rsz_) sz_ *= 2;
-        v_.resize(2*sz_ - 1, numeric_limits<T>::max());
+        v_.resize(2*sz_ - 1, numeric_limits<T>::min());
     }
 
     SegmentTree(vector<T> &v): rsz_(v.size()) {
         sz_ = 1;
         while (sz_ < rsz_) sz_ *= 2;
-        v_.resize(2*sz_ - 1, numeric_limits<T>::max());
+        v_.resize(2*sz_ - 1, numeric_limits<T>::min());
         for (size_t i = 0; i < rsz_; i++) {
             v_[sz_-1+i] = v[i];
         }
@@ -98,7 +112,7 @@ public:
         v_[idx] = k;
         while (idx > 0) {
             idx = (idx - 1) / 2;
-            v_[idx] = min(v_[2*idx+1], v_[2*idx+2]);
+            v_[idx] = max(v_[2*idx+1], v_[2*idx+2]);
         }
     }
 
@@ -112,7 +126,6 @@ public:
 
 };
 
-// lazy-evaluated segment tree (range sum)
 template<typename T>
 class LazyEvalSegmentTree {
     size_t sz_, rsz_;
@@ -120,7 +133,7 @@ class LazyEvalSegmentTree {
 
     T construct(size_t idx) {
         if (idx >= sz_-1) return val_[idx];
-        return val_[idx] = construct(2*idx+1) + construct(2*idx+2);
+        return val_[idx] = min(construct(2*idx+1), construct(2*idx+2));
     }
 
     void evaluate(size_t k, size_t l, size_t r) {
@@ -134,26 +147,26 @@ class LazyEvalSegmentTree {
     }
 
     T query(size_t a, size_t b, size_t k, size_t l, size_t r) {
-        if (r <= a || b <= l) return 0;
+        if (r <= a || b <= l) return numeric_limits<T>::max();
         evaluate(k, l, r);
         if (a <= l && r <= b) return val_[k];
         size_t mid = (l+r) / 2;
         T lv = query(a, b, 2*k+1, l, mid);
         T rv = query(a, b, 2*k+2, mid, r);
-        return lv + rv;
+        return min(lv, rv);
     }
 
     void add(size_t a, size_t b, T val, size_t k, size_t l, size_t r) {
         evaluate(k, l, r);
         if (r <= a || b <= l) return;
         if (a <= l && r <= b) {
-            lazy_[k] += val * (r - l);
+            lazy_[k] += val;
             evaluate(k, l, r);
         } else {
             size_t mid = (l+r) / 2;
             add(a, b, val, 2*k+1, l, mid);
             add(a, b, val, 2*k+2, mid, r);
-            val_[k] = val_[2*k+1] + val_[2*k+2];
+            val_[k] = min(val_[2*k+1], val_[2*k+2]);
         }
     }
 
@@ -168,7 +181,7 @@ public:
     LazyEvalSegmentTree(vector<T> &v): rsz_(v.size()) {
         sz_ = 1;
         while (sz_ < rsz_) sz_ *= 2;
-        val_.resize(2*sz_ - 1, 0);
+        val_.resize(2*sz_ - 1, numeric_limits<T>::max());
         lazy_.resize(2*sz_ - 1, 0);
         for (size_t i = 0; i < rsz_; i++) {
             val_[sz_-1+i] = v[i];
@@ -198,14 +211,42 @@ public:
     }
 };
 
+ll N, D, A;
+vector<ll> x, h;
+map<ll, ll> m;
+
 void solve()
 {
+    ll ans = 0;
+    LazyEvalSegmentTree<ll> st(h);
+    auto it = m.begin();
+    while (true) {
+        if (it == m.end()) break;
+        if (st.query(it->se, it->se+1) <= 0) {
+            it++;
+            continue;
+        }
+        auto n = prev(m.upper_bound(it->fi+2*D));
+        ll mh = st.query(it->se, n->se+1);
+        ll t = mh / A + (mh % A == 0 ? 0 : 1);
+        ans += t;
+        st.add(it->se, n->se+1, -(t*A));
+        it++;
+    }
+    cout << ans << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
+    cin >> N >> D >> A;
+    x.resize(N);
+    h.resize(N);
+    REP (i, N) {
+        cin >> x[i] >> h[i];
+        m[x[i]] = i;
+    }
     solve();
     return 0;
 }

@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -28,12 +30,14 @@ using namespace std;
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef pair<int, int> P;
-typedef pair<ll, ll> LP;
-typedef pair<int, P> IP;
-typedef pair<ll, LP> LLP;
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+using ll = long long;
+using ull = unsigned long long;
+using P = pair<int, int>;
+using LP = pair<ll, ll>;
+using IP = pair<int, P>;
+using LLP = pair<ll, LP>;
 
 const int dx[] = {1, -1, 0, 0};
 const int dy[] = {0, 0, 1, -1};
@@ -42,37 +46,103 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    size_t sz = v.size();
+    os << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        os << v[i] << ", ";
+    }
+    os << v[sz-1] <<  "]";
+    return os;
+}
+
+template<typename T>
+void printArray(T *arr, size_t sz) {
+    cerr << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        cerr << arr[i] << ",";
+    }
+    cerr << arr[sz-1] <<  "]";
+}
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+template<typename T>
+struct PairHash {
+    size_t operator()(const pair<T, T> &p) const {
+        const auto h1 = hash<T>()(p.fi);
+        const auto h2 = hash<T>()(p.se);
+        return h1 ^ (h2 << 1);
+    }
+};
+
+struct Compare {
+    //vector<ll> &x_, &y_;
+    //Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
+    //bool operator()(const P &lhs, const P &rhs) {
+    //    return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
+    //}
+    bool operator()(const int x, const int y) {
+        return x < y;
+    }
+};
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
-int N, M;
-int a[100000], b[100000];
-ll parent[100000];
-ll connect[100000];
+struct UnionFind {
+    vector<ll> parent;
+    UnionFind(ll n) : parent(n, -1) {};
+    int root(ll x) {
+        return (parent[x] < 0 ? x : (parent[x] = root(parent[x])));
+    }
+    void unite(ll x, ll y) {
+        x = root(x);
+        y = root(y);
+        if(x != y){
+            if(parent[y] < parent[x]) swap(x, y);
+            parent[x] += parent[y];
+            parent[y] = x;
+        }
+    }
+    bool same(ll x, ll y) {
+        return root(x) == root(y);
+    }
+    int size(ll x) {
+        return -parent[root(x)];
+    }
+};
 
-void init()
-{
-}
+ll N, M;
+vector<LP> e;
 
 void solve()
 {
-    ll m = N*(N-1)/2;
-    vector<ll> ans;
-    ans.pb(0);
-    REP(i, N-1) parent[i] = i;
-    for(ll i = M-1; i > 0; i--){
-        int pa = parent[a[i]];
-        int pb = parent[b[i]];
-        ll cpa = connect[pa];
-        ll cpb = connect[pb];
-        parent[a[i]] = min(min(pa, pb), a[i]);
-        parent[b[i]] = min(min(pa, pb), a[i]);
-        ll aa = (parent[a[i]] != pa ? cpa : 0);
-        ll ab = (parent[b[i]] != pb ? cpb : 0);
-        connect[parent[a[i]]] += aa + ab + 1;
-        ans.pb(ans[M-1-i] + (aa+1) * (ab+1));
+    stack<ll> ret;
+    UnionFind uf(N);
+    ll n = N*(N-1)/2;
+    ret.push(n);
+    FORR (i, M-1, 1) {
+        auto p = e[i];
+        if (!uf.same(p.fi, p.se)) {
+            ll fsz = uf.size(p.fi);
+            ll ssz = uf.size(p.se);
+            n -= fsz*ssz;
+        }
+        ret.push(max(n, 0ll));
+        uf.unite(p.fi, p.se);
     }
-    for(auto it = ans.rbegin(); it != ans.rend(); it++){
-        cout << max(m - *it, 0ll) << endl;
+    while (!ret.empty()) {
+        cout << ret.top() << endl;
+        ret.pop();
     }
 }
 
@@ -81,9 +151,11 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N >> M;
-    REP(i, M){
-        cin >> a[i] >> b[i];
-        a[i]--; b[i]--;
+    REP (i, M) {
+        ll x, y;
+        cin >> x >> y;
+        x--; y--;
+        e.pb(mp(x, y));
     }
     solve();
     return 0;

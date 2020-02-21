@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -28,6 +30,16 @@ using namespace std;
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
 
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
+
 typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<int, int> P;
@@ -42,66 +54,58 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
-int H, W;
-string s[2000];
-int l[2000][2000], r[2000][2000], u[2000][2000], b[2000][2000];
-
-int brightArea(int i, int j)
+ll gcd(ll a, ll b)
 {
-    if (i < 0 || H <= i || j < 0 || W <= j || s[i][j] == '#')
-        return 0;
-    int ret = 1;
-    FOR (k, 1, H) {
-        if (i+k >= H || s[i+k][j] == '#') break;
-        ret++;
+    while (b != 0) {
+        a %= b;
+        swap(a, b);
     }
-    FOR (k, 1, H) {
-        if (i-k < 0 || s[i-k][j] == '#') break;
-        ret++;
-    }
-    FOR (k, 1, W) {
-        if (j+k >= W || s[i][j+k] == '#') break;
-        ret++;
-    }
-    FOR (k, 1, W) {
-        if (j-k < 0 || s[i][j-k] == '#') break;
-        ret++;
+    return a;
+}
+
+inline ll lcm(ll a, ll b)
+{
+    // a*b may be overflowed
+    return a / gcd(a, b) * b;
+}
+
+ll lcm(vector<ll> v)
+{
+    size_t s = v.size();
+    ll ret = 1ll;
+    REP (i, s) {
+        if (ret % v[i] != 0) ret = lcm(ret, v[i]);
     }
     return ret;
 }
 
+int N;
+vector<ll> a, b;
+
 void solve()
 {
-    REP (i, H) {
-        FOR (j, 1, W) {
-            l[i][j] = (s[i][j-1] == '#' ? 0 : l[i][j-1]+1);
-        }
-    }
-    REP (i, H) {
-        REPR (j, W-2) {
-            r[i][j] = (s[i][j+1] == '#' ? 0 : r[i][j+1]+1);
-        }
-    }
-    FOR (i, 1, H) {
-        REP (j, W) {
-            u[i][j] = (s[i-1][j] == '#' ? 0 : u[i-1][j]+1);
-        }
-    }
-    REPR (i, H-2) {
-        REP (j, W) {
-            b[i][j] = (s[i+1][j] == '#' ? 0 : b[i+1][j]+1);
-        }
-    }
-
-    int ans = 0;
-    REP (i, H) {
-        REP (j, W) {
-            if (s[i][j] != '#') {
-                ans = max(ans, l[i][j]+r[i][j]+u[i][j]+b[i][j]+1);
-            }
-        }
+    ll lall = lcm(a);
+    ll ans = 0;
+    REP (i, N) b[i] = lall / a[i];
+    //REP (i, N) cout << b[i] << " ";
+    //cout << endl;
+    //REP (i, N) cout << a[i]*b[i] << " ";
+    //cout << endl;
+    REP (i, N) {
+        ans += b[i];
+        ans %= MOD;
     }
     cout << ans << endl;
 }
@@ -110,8 +114,10 @@ int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> H >> W;
-    REP(i, H) cin >> s[i];
+    cin >> N;
+    a.resize(N);
+    b.resize(N);
+    REP (i, N) cin >> a[i];
     solve();
     return 0;
 }

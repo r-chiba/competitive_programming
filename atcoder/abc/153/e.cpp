@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -28,6 +30,16 @@ using namespace std;
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
 
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
+
 typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<int, int> P;
@@ -42,50 +54,41 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
-int N;
-ull K;
-ull a[100000];
-int d[50];
-
-ll f(ll x)
-{
-    ll ret = 0;
-    REP(i, N) ret += (x ^ a[i]);
-    return ret;
-}
+int H, N;
+int a[1010], b[1010];
+int dp[1010][10010];
 
 void solve()
 {
-    REP(i, N){
-        ll x = a[i];
-        int j = 0;
-        while(x > 0){
-            if(x & 1) d[j]++;
-            x >>= 1;
-            j++;
+    REP (i, N+1) REP (j, H+1) dp[i][j] = INF;
+    dp[0][0] = 0;
+    REP (i, N) {
+        REP (j, H+1) {
+            dp[i+1][j] = dp[i][j];
+            dp[i+1][j] = min(dp[i+1][j], (j >= a[i] ? dp[i+1][j-a[i]] : 0) + b[i]);
         }
     }
-    ll x = 0;
-    REPR(i, 49){
-        if(K >= (1ull << i) && d[i] < N-d[i]){
-            x += (1ull << i);
-        }
-    }
-    int i = 0;
-    while(x > K) x &= ~(1ull << i++);
-    cout << f(x) << endl;
+    cout << dp[N][H] << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> N >> K;
-    REP(i, N){
-        cin >> a[i];
-    }
+    cin >> H >> N;
+    REP (i, N) cin >> a[i] >> b[i];
     solve();
     return 0;
 }

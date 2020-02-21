@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <algorithm>
 #include <numeric>
@@ -27,6 +29,16 @@ using namespace std;
 #define REP(i, n) for(ll i = 0ll; i < static_cast<ll>(n); i++)
 #define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
 #define ALL(x) (x).begin(), (x).end()
+
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
+
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "[";
+    for (auto e: v) os << e << ",";
+    os << "]";
+    return os;
+}
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -49,75 +61,37 @@ static inline ll mod(ll x, ll m)
     return (y >= 0 ? y : y+m);
 }
 
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
 string s;
-
-typedef vector<ll> vec;
-typedef vector<vec> mat;
-
-vec matvecmul(mat &A, vec &b)
-{
-    ll m = A.size(), n = b.size();
-    vec v(m);
-    REP(i, m){
-        REP(j, n){
-            v[i] += A[i][j] * b[j];
-        }
-    }
-    return v;
-}
-
-
-mat matmul(mat &A, mat &B)
-{
-    mat C(A.size(), vec(B[0].size()));
-    size_t nr = A.size(), nint = B.size(), nc = B[0].size();
-    REP(i, nr){
-        REP(k, nint){
-            REP(j, nc){
-                C[i][j] = (C[i][j] + A[i][k] * B[k][j]) % MOD;
-            }
-        }
-    }
-    return C;
-}
-
-mat matpow(mat A, ll n)
-{
-    mat B(A.size(), vec(A.size()));
-    REP(i, A.size()) B[i][i] = 1;
-    while(n > 0){
-        if(n & 1) B = matmul(B, A);
-        A = matmul(A, A);
-        n >>= 1;
-    }
-    return B;
-}
+int l[100010], r[100010];
 
 void solve()
 {
-    ll n = s.size();
-    mat m(n, vec(n));
-    vec v(n, 1);
+    int n = s.size();
+    l[n-1] = n-1;
+    r[0] = 0;
+    FOR (i, 1, n)
+        r[i] = (s[i] == 'R' ? i : r[i-1]);
+    REPR (i, n-2)
+        l[i] = (s[i] == 'L' ? i : l[i+1]);
 
-    REP(i, n){
-        if(s[i] == 'L') m[i-1][i] = 1;
-        else m[i+1][i] = 1;
-    }
-#if 0
-    REP(i, n){
-        REP(j, n){
-            cout << m[i][j] << " ";
+    vector<int> ans(n);
+    REP (i, n) {
+        if (s[i] == 'L') {
+            int d = r[i] - i;
+            ans[r[i] + (d % 2 == 0 ? 0 : 1)]++;
+        } else {
+            int d = l[i] - i;
+            ans[l[i] - (d % 2 == 0 ? 0 : 1)]++;
         }
-        cout << endl;
     }
-#endif
+    REP (i, n-1) cout << ans[i] << " ";
+    cout << ans[n-1] << endl;
 
-    REP(i, 100) m = matpow(m, 10);
-    v = matvecmul(m, v);
-    REP(i, n-1) cout << v[i] << " ";
-    cout << v[n-1] << endl;
 }
 
 int main()

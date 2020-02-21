@@ -78,7 +78,7 @@ ll gcd(ll a, ll b)
     return a;
 }
 
-ll gcd(vector<ll> v)
+ll gcd(vector<ll> &v)
 {
     size_t s = v.size();
     if(s == 0) return -1;
@@ -124,7 +124,7 @@ inline ll lcm(ll a, ll b)
     return a / gcd(a, b) * b;
 }
 
-ll lcm(vector<ll> v)
+ll lcm(vector<ll> &v)
 {
     size_t s = v.size();
     ll ret = 1ll;

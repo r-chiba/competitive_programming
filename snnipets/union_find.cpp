@@ -47,12 +47,12 @@ constexpr double EPS = 1e-9;
 #if 1 // by size
 
 struct UnionFind{
-    vector<int> parent;
-    UnionFind(int n) : parent(n, -1) {};
-    int root(int x){
+    vector<ll> parent;
+    UnionFind(ll n) : parent(n, -1) {};
+    int root(ll x){
         return (parent[x] < 0 ? x : (parent[x] = root(parent[x])));
     }
-    void unite(int x, int y){
+    void unite(ll x, ll y){
         x = root(x);
         y = root(y);
         if(x != y){
@@ -61,10 +61,10 @@ struct UnionFind{
             parent[y] = x;
         }
     }
-    bool same(int x, int y){
+    bool same(ll x, ll y){
         return root(x) == root(y);
     }
-    int size(int x){
+    ll size(ll x){
         return -parent[root(x)];
     }
 };
@@ -72,12 +72,12 @@ struct UnionFind{
 #else // by rank
 
 struct UnionFind{
-    vector<int> parent, rank;
-    UnionFind(int n) : parent(n, -1), rank(n, 1) {};
-    int root(int x){
+    vector<ll> parent, rank;
+    UnionFind(ll n) : parent(n, -1), rank(n, 1) {};
+    int root(ll x){
         return (parent[x] < 0 ? x : (parent[x] = root(parent[x])));
     }
-    void unite(int x, int y){
+    void unite(ll x, ll y){
         x = root(x);
         y = root(y);
         if(x == y) return;
@@ -88,7 +88,7 @@ struct UnionFind{
             if(rank[x] == rank[y]) rank[x]++;
         }
     }
-    bool same(int x, int y){
+    bool same(ll x, ll y){
         return root(x) == root(y);
     }
 };
