@@ -114,7 +114,15 @@ void printArray(T *arr, size_t sz) {
     for (size_t i = 0; i < sz-1; i++) {
         cerr << arr[i] << ",";
     }
-    cerr << arr[sz-1] <<  "]" << endl;
+    if (sz > 0) cerr << arr[sz-1];
+    cerr << "]" << endl;
+}
+
+// print pair
+template<typename T, typename U>
+ostream &operator<<(ostream &os, const pair<T, U> &p) {
+    os << "(" << p.first << ", " << p.se << ")";
+    return os;
 }
 
 static inline ll mod(ll x, ll m)

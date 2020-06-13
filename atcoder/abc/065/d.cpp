@@ -1,156 +1,167 @@
 // {{{
-#include <iostream>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <complex>
+#include <cmath>
+#include <climits>
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
 #include <queue>
 #include <stack>
-#include <map>
 #include <string>
-#include <algorithm>
 #include <numeric>
+#include <complex>
+#include <utility>
+#include <type_traits>
 using namespace std;
 
 #define fi first
 #define se second
 #define pb push_back
 #define mp make_pair
-#define FOR(i, a, b) for(size_t i = static_cast<size_t>(a); i < static_cast<size_t>(b); i++)
-#define FORR(i, a, b) for(size_t i = static_cast<size_t>(a); i >= static_cast<size_t>(b); i--)
-#define REP(i, n) for(size_t i = 0; i < static_cast<size_t>(n); i++)
-#define REPR(i, n) for(size_t i = static_cast<size_t>(n); i >= 0; i--)
+#define FOR(i, a, b) for(ll i = static_cast<ll>(a); i < static_cast<ll>(b); ++i)
+#define FORR(i, a, b) for(ll i = static_cast<ll>(a); i >= static_cast<ll>(b); --i)
+#define REP(i, n) FOR(i, 0, n)
+#define REPR(i, n) FORR(i, n, 0)
 #define ALL(x) (x).begin(), (x).end()
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
 
-typedef long long ll;
-typedef pair<int, int> P;
-typedef pair<ll, ll> LP;
-typedef pair<int, P> IP;
-typedef pair<ll, LP> LLP;
+using ll = long long;
+using ull = unsigned long long;
+using P = pair<int, int>;
+using LP = pair<ll, ll>;
+using IP = pair<int, P>;
+using LLP = pair<ll, LP>;
 
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
 
 constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+// {{{ popcount
+static int popcount(int x) {
+    return __builtin_popcount(static_cast<unsigned int>(x));
+}
+static int popcount(unsigned int x) {
+    return __builtin_popcount(x);
+}
+static int popcount(long x) {
+    return __builtin_popcountl(static_cast<unsigned long>(x));
+}
+static int popcount(unsigned long x) {
+    return __builtin_popcountl(x);
+}
+static int popcount(long long x) {
+    return __builtin_popcountll(static_cast<unsigned long long>(x));
+}
+static int popcount(unsigned long long x) {
+    return __builtin_popcountll(x);
+}
 // }}}
 
-class UnionFind{
-    vector<size_t> m_parents;
-    vector<ll> m_ranks;
-
-public:
-    UnionFind(size_t n){
-        m_parents.resize(n);
-        m_ranks.resize(n);
-        for(size_t i = 0; i < n; i++){
-            m_parents[i] = i;
-            m_ranks[i] = 0;
-        }
+// template specialization of std::hash for std::pair
+namespace std {
+template<typename T, typename U>
+struct hash<pair<T, U> > {
+    size_t operator()(const pair<T, U> &key) const noexcept {
+        size_t h1 = hash<T>()(key.first);
+        size_t h2 = hash<U>()(key.second);
+        return h1 ^ (h2 << 1);
     }
+};
+} // namespace std
 
-    size_t root(size_t x){
-        if(m_parents[x] == x) return x;
-        size_t r = root(m_parents[x]);
-        m_parents[x] = r;
-        return r;
+// print vector
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    size_t sz = v.size();
+    os << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        os << v[i] << ", ";
     }
+    os << v[sz-1] <<  "]";
+    return os;
+}
 
-    bool isSame(size_t x, size_t y){
-        return root(x) == root(y);
+// print array (except char literal)
+template<
+    typename T,
+    int N,
+    typename std::enable_if<!std::is_same<T, char>::value, std::nullptr_t>::type = nullptr>
+ostream &operator<<(ostream &os, const T (&v)[N]) {
+    os << "[";
+    for (size_t i = 0; i < N-1; i++) {
+        os << v[i] << ", ";
     }
+    os << v[N-1] <<  "]";
+    return os;
+}
 
-    void unite(size_t x, size_t y){
-        size_t rx = root(x);
-        size_t ry = root(y);
-        if(rx != ry){
-            if(m_ranks[rx] < m_ranks[ry]) swap(rx, ry);
-            if(m_ranks[rx] == m_ranks[ry]) m_ranks[rx]++;
-            m_parents[ry] = rx;
-        }
+// print array
+template<typename T>
+void printArray(T *arr, size_t sz) {
+    cerr << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        cerr << arr[i] << ",";
+    }
+    cerr << arr[sz-1] <<  "]" << endl;
+}
+
+// print pair
+template<typename T, typename U>
+ostream &operator<<(ostream &os, const pair<T, U> &p) {
+    os << "(" << p.first << ", " << p.se << ")";
+    return os;
+}
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+struct Compare {
+    //vector<ll> &x_, &y_;
+    //Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
+    //bool operator()(const P &lhs, const P &rhs) {
+    //    return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
+    //}
+    bool operator()(const int x, const int y) {
+        return x < y;
     }
 };
 
-ll V, E;
-LLP vs[100010];
-struct edge {
-    ll u, v, cost;
-    edge(): u(0), v(0), cost(0) {};
-    edge(ll u_, ll v_): u(u_), v(v_) {
-        cost = min(abs(vs[u].se.fi - vs[v].se.fi), abs(vs[u].se.se - vs[v].se.se));
-        //cout << "[" << u << ", " << v << "] " << cost << endl;
-    };
-};
-edge es[400040];
-bool comp(const edge &lhs, const edge &rhs)
-{
-    return lhs.cost < rhs.cost;
-}
-bool xcomp(const LLP &lhs, const LLP &rhs)
-{
-    return lhs.se.fi < rhs.se.fi;
-}
+// print floating-point number
+// cout << fixed << setprecision(12) <<
 
-bool ycomp(const LLP &lhs, const LLP &rhs)
-{
-    return lhs.se.se < rhs.se.se;
-}
+// }}}
 
-ll kruskal()
-{
-    sort(es, es+E, comp);
-    UnionFind uf(V);
-    ll ret = 0;
-    REP(i, E){
-        edge e = es[i];
-        //cout << "(" << e.cost << ")" << endl;
-        if(!uf.isSame(e.u, e.v)){
-            uf.unite(e.u, e.v);
-            //cout << e.cost << endl;
-            ret += e.cost;
-        }
-    }
-    return ret;
-}
-
-void init()
-{
-}
+int N;
+vector<LP> v;
 
 void solve()
 {
-    vector<LLP> xvs, yvs;
-    REP(i, V){
-        xvs.pb(vs[i]);
-        yvs.pb(vs[i]);
-    }
-    sort(xvs.begin(), xvs.end(), xcomp);
-    sort(yvs.begin(), yvs.end(), ycomp);
-    E = 4*(V-1);
-    REP(i, V-1){
-        es[4*i] = edge(xvs[i].fi, xvs[i+1].fi);
-        es[4*i+1] = edge(xvs[i+1].fi, xvs[i].fi);
-        es[4*i+2] = edge(yvs[i].fi, yvs[i+1].fi);
-        es[4*i+3] = edge(yvs[i+1].fi, yvs[i].fi);
-    }
-    cout << kruskal() << endl;
 }
 
 int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    cin >> V;
-    REP(i, V){
+    cin >> N;
+    REP (i, N) {
         ll x, y;
-        cin >> x >> y;
-        vs[i] = LLP(i, LP(x, y));
+        cin >> x, y;
+        v.emplace_back(x, y);
     }
     solve();
     return 0;

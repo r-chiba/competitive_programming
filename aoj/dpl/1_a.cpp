@@ -1,81 +1,165 @@
 // {{{
-#include <iostream>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <complex>
+#include <cmath>
+#include <climits>
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
 #include <queue>
 #include <stack>
-#include <map>
 #include <string>
-#include <algorithm>
-#if __cplusplus >= 201103
 #include <numeric>
-#endif
+#include <complex>
+#include <utility>
+#include <type_traits>
 using namespace std;
 
 #define fi first
 #define se second
 #define pb push_back
 #define mp make_pair
-#define FOR(i, a, b) for(int i = (a); i < (b); i++)
-#define FORR(i, a, b) for(int i = (a); i >= (b); i--)
-#define REP(i, n) for(int i = 0; i < (n); i++)
-#define REPR(i, n) for(int i = (n); i >= 0; i--)
+#define FOR(i, a, b) for(ll i = static_cast<ll>(a); i < static_cast<ll>(b); ++i)
+#define FORR(i, a, b) for(ll i = static_cast<ll>(a); i >= static_cast<ll>(b); --i)
+#define REP(i, n) FOR(i, 0, n)
+#define REPR(i, n) FORR(i, n, 0)
 #define ALL(x) (x).begin(), (x).end()
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
 
-//#if __cplusplus >= 201103
-typedef long long ll;
-//#endif
-typedef pair<int, int> P;
-typedef pair<int, P> IP;
+using ll = long long;
+using ull = unsigned long long;
+using P = pair<int, int>;
+using LP = pair<ll, ll>;
+using IP = pair<int, P>;
+using LLP = pair<ll, LP>;
 
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
 
-const int INF = 100000000;
-//#if __cplusplus >= 201103
-const ll LINF = 10000000000000000ll;
-//#endif
-const int MOD = 1e9 + 7;
-const double EPS = 1e-9;
+constexpr int INF = 100000000;
+constexpr ll LINF = 10000000000000000ll;
+constexpr int MOD = static_cast<int>(1e9 + 7);
+constexpr double EPS = 1e-9;
+
+// {{{ popcount
+static int popcount(int x) {
+    return __builtin_popcount(static_cast<unsigned int>(x));
+}
+static int popcount(unsigned int x) {
+    return __builtin_popcount(x);
+}
+static int popcount(long x) {
+    return __builtin_popcountl(static_cast<unsigned long>(x));
+}
+static int popcount(unsigned long x) {
+    return __builtin_popcountl(x);
+}
+static int popcount(long long x) {
+    return __builtin_popcountll(static_cast<unsigned long long>(x));
+}
+static int popcount(unsigned long long x) {
+    return __builtin_popcountll(x);
+}
 // }}}
 
-int n, m;
-int coins[20];
-int dp[20][50001];
-
-void init()
-{
-    sort(coins, coins+m);
-    REP(i, m){
-        int d = n / coins[i];
-        FOR(j, 1, d+1){
-            dp[i][coins[i] * j] = j;
-        }
+// template specialization of std::hash for std::pair
+namespace std {
+template<typename T, typename U>
+struct hash<pair<T, U> > {
+    size_t operator()(const pair<T, U> &key) const noexcept {
+        size_t h1 = hash<T>()(key.first);
+        size_t h2 = hash<U>()(key.second);
+        return h1 ^ (h2 << 1);
     }
+};
+} // namespace std
+
+// print vector
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    size_t sz = v.size();
+    os << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        os << v[i] << ", ";
+    }
+    os << v[sz-1] <<  "]";
+    return os;
 }
 
-int dfs(int k, int sum)
-{
-    int ret = INF;
-    int d = sum / coins[k];
-    if(dp[k][sum] != 0) return dp[k][sum];
-    if(k < 0) return INF;
-    REP(i, d+1){
-        ret = min(ret, dfs(k-1, sum-coins[k]*i) + i);
+// print array (except char literal)
+template<
+    typename T,
+    int N,
+    typename std::enable_if<!std::is_same<T, char>::value, std::nullptr_t>::type = nullptr>
+ostream &operator<<(ostream &os, const T (&v)[N]) {
+    os << "[";
+    for (size_t i = 0; i < N-1; i++) {
+        os << v[i] << ", ";
     }
-    dp[k][sum] = ret;
-    return ret;
+    os << v[N-1] <<  "]";
+    return os;
 }
+
+// print array
+template<typename T>
+void printArray(T *arr, size_t sz) {
+    cerr << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        cerr << arr[i] << ",";
+    }
+    cerr << arr[sz-1] <<  "]" << endl;
+}
+
+// print pair
+template<typename T, typename U>
+ostream &operator<<(ostream &os, const pair<T, U> &p) {
+    os << "(" << p.first << ", " << p.se << ")";
+    return os;
+}
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+struct Compare {
+    //vector<ll> &x_, &y_;
+    //Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
+    //bool operator()(const P &lhs, const P &rhs) {
+    //    return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
+    //}
+    bool operator()(const int x, const int y) {
+        return x < y;
+    }
+};
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
+// }}}
+
+int m, n;
+int c[21];
+int dp[50001];
 
 void solve()
 {
-    cout << dfs(m-1, n) << endl;
+    REP (i, n+1) dp[i] = INF;
+    dp[0] = 0;
+    REP (i, n+1) {
+        REP (j, m) {
+            if (i >= c[j]) dp[i] = min(dp[i], dp[i-c[j]] + 1);
+        }
+    }
+    cout << dp[n] << endl;
 }
 
 int main()
@@ -83,10 +167,9 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> n >> m;
-    REP(i, m){
-        cin >> coins[i];
+    REP (i, m) {
+        cin >> c[i];
     }
-    init();
     solve();
     return 0;
 }

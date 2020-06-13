@@ -26,12 +26,11 @@ using namespace std;
 #define se second
 #define pb push_back
 #define mp make_pair
-#define FOR(i, a, b) for(ll i = static_cast<ll>(a); i < static_cast<ll>(b); i++)
-#define FORR(i, a, b) for(ll i = static_cast<ll>(a); i >= static_cast<ll>(b); i--)
-#define REP(i, n) for(ll i = 0ll; i < static_cast<ll>(n); i++)
-#define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
+#define FOR(i, a, b) for(ll i = static_cast<ll>(a); i < static_cast<ll>(b); ++i)
+#define FORR(i, a, b) for(ll i = static_cast<ll>(a); i >= static_cast<ll>(b); --i)
+#define REP(i, n) FOR(i, 0, n)
+#define REPR(i, n) FORR(i, n, 0)
 #define ALL(x) (x).begin(), (x).end()
-
 #define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
 
 using ll = long long;
@@ -48,6 +47,27 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+// {{{ popcount
+static int popcount(int x) {
+    return __builtin_popcount(static_cast<unsigned int>(x));
+}
+static int popcount(unsigned int x) {
+    return __builtin_popcount(x);
+}
+static int popcount(long x) {
+    return __builtin_popcountl(static_cast<unsigned long>(x));
+}
+static int popcount(unsigned long x) {
+    return __builtin_popcountl(x);
+}
+static int popcount(long long x) {
+    return __builtin_popcountll(static_cast<unsigned long long>(x));
+}
+static int popcount(unsigned long long x) {
+    return __builtin_popcountll(x);
+}
+// }}}
 
 // template specialization of std::hash for std::pair
 namespace std {
@@ -87,6 +107,7 @@ ostream &operator<<(ostream &os, const T (&v)[N]) {
     return os;
 }
 
+// print array
 template<typename T>
 void printArray(T *arr, size_t sz) {
     cerr << "[";
@@ -118,6 +139,8 @@ struct Compare {
 
 // }}}
 
+ll n, k;
+
 void solve()
 {
 }
@@ -126,16 +149,7 @@ int main()
 {
     cin.tie(0);
     ios::sync_with_stdio(false);
-    int arr[10], arr2[10][10];
-    for (int i = 0; i < 10; ++i) {
-        arr[i] = i;
-        for (int j = 0; j < 10; ++j) {
-            arr2[i][j] = i*10+j;
-        }
-    }
-    cout << arr << endl;
-    DBG(arr);
-    DBG(arr2);
+    cin >> n >> k;
     solve();
     return 0;
 }

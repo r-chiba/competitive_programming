@@ -52,7 +52,7 @@ void permutation(vector<int> &arr)
   }while(next_permutation(arr.begin(), arr.end()));
 }
 
-# if 1 // use this if n and k are small (e.g. 1 <= k <= n <= 2000)
+// use this if n and k are small (e.g. 1 <= k <= n <= 2000)
 // pascal's triangle
 // comb[n][k] = nCk (mod MOD)
 const int COMB_MAX = 2000;
@@ -66,7 +66,21 @@ void combination()
         }
     }
 }
-#else // use this if above condition is not met
+// use this if n is fixed and too big (<= 10^9) and k is relatively small (k ~ 10^7)
+// O(k)
+ll comb[200010];
+void combInit(ll n, ll maxk, ll mod) {
+    comb[0] = 1;
+    FOR (k, 1, maxk+1) {
+        comb[k] = comb[k-1];
+        comb[k] *= (n - k + 1);
+        comb[k] %= mod;
+        comb[k] *= mod_inverse(k, MOD);
+        comb[k] %= mod;
+    }
+}
+// use this if above conditions are not met
+// O(n)
 constexpr int COMB_MAX = 510000;
 ll fac[COMB_MAX];   // fac[i]  = i!        (mod MOD)
 ll finv[COMB_MAX];  // finv[i] = (i!)^{-1} (mod MOD)
@@ -91,7 +105,6 @@ ll comb(int n, int k)
     if(n < 0 || k < 0) return 0;
     return fac[n] * (finv[k] * finv[n-k] % MOD) % MOD;
 }
-#endif
 
 void solve()
 {

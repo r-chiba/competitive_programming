@@ -1,39 +1,44 @@
 // {{{
-#include <iostream>
-#include <iomanip>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 #include <climits>
-#include <complex>
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
 #include <queue>
 #include <stack>
-#include <map>
 #include <string>
-#include <algorithm>
 #include <numeric>
+#include <complex>
+#include <utility>
+#include <type_traits>
 using namespace std;
 
 #define fi first
 #define se second
 #define pb push_back
 #define mp make_pair
-#define FOR(i, a, b) for(ll i = static_cast<ll>(a); i < static_cast<ll>(b); i++)
-#define FORR(i, a, b) for(ll i = static_cast<ll>(a); i >= static_cast<ll>(b); i--)
-#define REP(i, n) for(ll i = 0ll; i < static_cast<ll>(n); i++)
-#define REPR(i, n) for(ll i = static_cast<ll>(n); i >= 0ll; i--)
+#define FOR(i, a, b) for(ll i = static_cast<ll>(a); i < static_cast<ll>(b); ++i)
+#define FORR(i, a, b) for(ll i = static_cast<ll>(a); i >= static_cast<ll>(b); --i)
+#define REP(i, n) FOR(i, 0, n)
+#define REPR(i, n) FORR(i, n, 0)
 #define ALL(x) (x).begin(), (x).end()
+#define DBG(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl;
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef pair<int, int> P;
-typedef pair<ll, ll> LP;
-typedef pair<int, P> IP;
-typedef pair<ll, LP> LLP;
+using ll = long long;
+using ull = unsigned long long;
+using P = pair<int, int>;
+using LP = pair<ll, ll>;
+using IP = pair<int, P>;
+using LLP = pair<ll, LP>;
 
 const int dx[] = {1, -1, 0, 0};
 const int dy[] = {0, 0, 1, -1};
@@ -42,33 +47,134 @@ constexpr int INF = 100000000;
 constexpr ll LINF = 10000000000000000ll;
 constexpr int MOD = static_cast<int>(1e9 + 7);
 constexpr double EPS = 1e-9;
+
+// {{{ popcount
+static int popcount(int x) {
+    return __builtin_popcount(static_cast<unsigned int>(x));
+}
+static int popcount(unsigned int x) {
+    return __builtin_popcount(x);
+}
+static int popcount(long x) {
+    return __builtin_popcountl(static_cast<unsigned long>(x));
+}
+static int popcount(unsigned long x) {
+    return __builtin_popcountl(x);
+}
+static int popcount(long long x) {
+    return __builtin_popcountll(static_cast<unsigned long long>(x));
+}
+static int popcount(unsigned long long x) {
+    return __builtin_popcountll(x);
+}
+// }}}
+
+// template specialization of std::hash for std::pair
+namespace std {
+template<typename T, typename U>
+struct hash<pair<T, U> > {
+    size_t operator()(const pair<T, U> &key) const noexcept {
+        size_t h1 = hash<T>()(key.first);
+        size_t h2 = hash<U>()(key.second);
+        return h1 ^ (h2 << 1);
+    }
+};
+} // namespace std
+
+// print vector
+template<typename T>
+ostream &operator<<(ostream &os, const vector<T> &v) {
+    size_t sz = v.size();
+    os << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        os << v[i] << ", ";
+    }
+    os << v[sz-1] <<  "]";
+    return os;
+}
+
+// print array (except char literal)
+template<
+    typename T,
+    int N,
+    typename std::enable_if<!std::is_same<T, char>::value, std::nullptr_t>::type = nullptr>
+ostream &operator<<(ostream &os, const T (&v)[N]) {
+    os << "[";
+    for (size_t i = 0; i < N-1; i++) {
+        os << v[i] << ", ";
+    }
+    os << v[N-1] <<  "]";
+    return os;
+}
+
+// print array
+template<typename T>
+void printArray(T *arr, size_t sz) {
+    cerr << "[";
+    for (size_t i = 0; i < sz-1; i++) {
+        cerr << arr[i] << ",";
+    }
+    cerr << arr[sz-1] <<  "]" << endl;
+}
+
+// print pair
+template<typename T, typename U>
+ostream &operator<<(ostream &os, const pair<T, U> &p) {
+    os << "(" << p.first << ", " << p.se << ")";
+    return os;
+}
+
+static inline ll mod(ll x, ll m)
+{
+    ll y = x % m;
+    return (y >= 0 ? y : y+m);
+}
+
+struct Compare {
+    //vector<ll> &x_, &y_;
+    //Compare(vector<ll> &x, vector<ll> &y): x_(x), y_(y) {}
+    //bool operator()(const P &lhs, const P &rhs) {
+    //    return x_[lhs.fi]+y_[lhs.se] < x_[rhs.fi]+y_[rhs.se];
+    //}
+    bool operator()(const int x, const int y) {
+        return x < y;
+    }
+};
+
+// print floating-point number
+// cout << fixed << setprecision(12) <<
+
 // }}}
 
 int N, M, Q;
-P trains[200000];
-P queries[100000];
-int a[500][500];
-int s[500][500];
-
-void init()
-{
-}
+P t[200010], r[100010];
+int a[500], b[500], c[500];
+int sa[500], sb[500], sc[500];
 
 void solve()
 {
-    REP(i, M){
-        a[trains[i].fi][trains[i].se]++;
+    REP (i, M) {
+        ++a[t[i].fi];
+        ++b[t[i].se];
+        ++c[t[i].fi];
+        --c[t[i].se+1];
     }
-    REP(i, N){
-        REP(j, N){
-            s[i][j] = a[i][j] + (j > 0 ? s[i][j-1] : 0);
-        }
+    sa[0] = a[0];
+    sb[0] = b[0];
+    sc[0] = c[0];
+    FOR (i, 1, N) {
+        sa[i] = sa[i-1] + a[i];
+        sb[i] = sb[i-1] + b[i];
+        sc[i] = sc[i-1] + c[i];
     }
-    REP(i, Q){
-        int ret = 0;
-        P &q = queries[i];
-        FOR(j, q.fi, q.se+1) ret += s[j][q.se];
-        cout << ret << endl;
+    printArray(a, N);
+    printArray(b, N);
+    printArray(c, N);
+    printArray(sa, N);
+    printArray(sb, N);
+    printArray(sc, N);
+    REP (i, Q) {
+        cout << sb[r[i].se] - (r[i].fi > 0 ? sa[r[i].fi-1] : 0) + sc[r[i].se] << endl;
     }
 }
 
@@ -77,17 +183,15 @@ int main()
     cin.tie(0);
     ios::sync_with_stdio(false);
     cin >> N >> M >> Q;
-    REP(i, M){
-        int a, b;
-        cin >> a >> b;
-        a--; b--;
-        trains[i] = mp(a, b);
+    REP (i, M) {
+        cin >> t[i].fi >> t[i].se;
+        t[i].fi--;
+        t[i].se--;
     }
-    REP(i, Q){
-        int a, b;
-        cin >> a >> b;
-        a--; b--;
-        queries[i] = mp(a, b);
+    REP (i, M) {
+        cin >> r[i].fi >> r[i].se;
+        r[i].fi--;
+        r[i].se--;
     }
     solve();
     return 0;
